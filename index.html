@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>入党流程信息查询</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap');
+
+  :root {
+    --red-900: #7f1d1d;
+    --red-800: #991b1b;
+    --red-700: #b91c1c;
+    --red-600: #dc2626;
+    --red-500: #ef4444;
+    --red-100: #fee2e2;
+    --red-50: #fef2f2;
+    --gold-500: #d4a843;
+    --gold-400: #e2bd5e;
+    --gold-300: #ebd08b;
+    --gold-200: #f0dda0;
+    --green-700: #15803d;
+    --green-100: #dcfce7;
+    --orange-600: #ea580c;
+    --orange-100: #ffedd5;
+    --blue-600: #2563eb;
+    --blue-100: #dbeafe;
+    --neutral-900: #1a1a1a;
+    --neutral-700: #404040;
+    --neutral-500: #737373;
+    --neutral-300: #d4d4d4;
+    --neutral-200: #e5e5e5;
+    --neutral-100: #f5f5f5;
+    --neutral-50: #fafafa;
+    --bg: #fdfbf7;
+    --card-bg: #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--neutral-900);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, var(--red-800) 0%, var(--red-700) 50%, var(--red-900) 100%);
+    padding: 1.8rem 1.5rem 1.6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .header-logo {
+    position: absolute;
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 38px;
+    /* Red → Gold color transform */
+    filter: brightness(0) invert(78%) sepia(40%) saturate(600%) hue-rotate(350deg) brightness(95%);
+    opacity: 0.85;
+    z-index: 1;
+  }
+
+  .header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    position: relative;
+  }
+  .header .subtitle {
+    color: var(--gold-300);
+    font-size: clamp(0.65rem, 2vw, 0.78rem);
+    margin-top: 0.35rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    position: relative;
+  }
+
+  /* ── Container ── */
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  /* ── Status banner ── */
+  .status-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    animation: slideUp 0.3s ease-out;
+  }
+  .status-banner.loading { background: var(--blue-100); color: var(--blue-600); }
+  .status-banner.success { background: var(--green-100); color: var(--green-700); }
+  .status-banner.fail    { background: var(--orange-100); color: var(--orange-600); }
+
+  /* ── Search ── */
+  .search-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.8rem 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .search-card h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    color: var(--neutral-900);
+  }
+
+  .input-group { margin-bottom: 1rem; }
+  .input-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--neutral-700);
+    margin-bottom: 0.3rem;
+  }
+  .input-group label .req { color: var(--red-600); margin-left: 2px; }
+  .input-group input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.92rem;
+    border: 1.5px solid var(--neutral-300);
+    border-radius: 8px;
+    background: var(--neutral-50);
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: var(--neutral-900);
+  }
+  .input-group input:focus {
+    outline: none;
+    border-color: var(--red-500);
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    background: #fff;
+  }
+  .input-group input::placeholder { color: var(--neutral-500); font-size: 0.85rem; }
+  .input-group input.input-error { border-color: var(--red-500); background: var(--red-50); }
+  .field-error {
+    font-size: 0.75rem;
+    color: var(--red-600);
+    margin-top: 0.25rem;
+    display: none;
+  }
+
+  .search-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, var(--red-700), var(--red-800));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    margin-top: 0.3rem;
+  }
+  .search-btn:hover {
+    background: linear-gradient(135deg, var(--red-600), var(--red-700));
+    box-shadow: 0 4px 12px rgba(185,28,28,0.3);
+    transform: translateY(-1px);
+  }
+  .search-btn:active { transform: translateY(0); }
+  .search-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── Results ── */
+  .result-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.8rem 1.5rem;
+    border: 1px solid rgba(0,0,0,0.04);
+    animation: slideUp 0.35s ease-out;
+    margin-bottom: 1rem;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-name {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--red-800);
+    margin-bottom: 0.2rem;
+  }
+  .result-id {
+    font-size: 0.8rem;
+    color: var(--neutral-500);
+    margin-bottom: 1.2rem;
+    font-family: 'Menlo', 'Consolas', monospace;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--red-100);
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 1.6rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px; top: 4px; bottom: 4px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--red-500), var(--gold-500));
+    border-radius: 1px;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 1.2rem;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.6rem; top: 6px;
+    width: 10px; height: 10px;
+    background: var(--red-600);
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--red-300);
+  }
+  .timeline-item.empty::before {
+    background: var(--neutral-300);
+    box-shadow: 0 0 0 2px var(--neutral-200);
+  }
+
+  .tl-label { font-size: 0.78rem; font-weight: 500; color: var(--neutral-500); }
+  .tl-value { font-size: 0.95rem; font-weight: 500; color: var(--neutral-900); margin-top: 0.1rem; }
+  .tl-value.empty-val { color: var(--neutral-500); font-weight: 400; font-style: italic; font-size: 0.85rem; }
+
+  /* ── 思想汇报表格 ── */
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-top: 0.5rem;
+  }
+  .report-table th {
+    background: var(--neutral-100);
+    font-weight: 500;
+    color: var(--neutral-700);
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    border-bottom: 1px solid var(--neutral-200);
+  }
+  .report-table td {
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--neutral-100);
+    vertical-align: middle;
+  }
+  .report-table tr:last-child td { border-bottom: none; }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.15em 0.5em;
+    border-radius: 4px;
+  }
+  .badge-green  { background: var(--green-100); color: var(--green-700); }
+  .badge-orange { background: var(--orange-100); color: var(--orange-600); }
+  .badge-gray   { background: var(--neutral-100); color: var(--neutral-500); }
+
+  .msg {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-radius: var(--radius);
+    animation: slideUp 0.3s ease-out;
+  }
+  .msg.not-found { background: var(--neutral-100); color: var(--neutral-700); }
+  .msg.no-data   { color: var(--neutral-500); font-size: 0.85rem; }
+  .msg .msg-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .msg p { font-size: 0.9rem; }
+
+  .footer {
+    text-align: center;
+    padding: 2rem 1rem 1.5rem;
+    font-size: 0.72rem;
+    color: var(--neutral-500);
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 1rem; }
+    .search-card, .result-card { padding: 1.2rem; }
+    .report-table { font-size: 0.76rem; }
+    .report-table th, .report-table td { padding: 0.4rem; }
+    .header-logo { height: 28px; left: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img src="logo.png" alt="中国人民大学" class="header-logo">
+  <h1>入党流程信息查询</h1>
+  <div class="subtitle">中国人民大学应用经济学院2025级本科1班团支部</div>
+</div>
+
+<div class="container">
+
+  <div id="statusBanner" class="status-banner loading" style="display:none;"></div>
+
+  <!-- Search -->
+  <div class="search-card">
+    <h2>查询入党流程进度</h2>
+    <div class="input-group">
+      <label for="nameInput">姓名 <span class="req">*</span></label>
+      <input type="text" id="nameInput" placeholder="请输入姓名">
+      <div class="field-error" id="nameError">请输入姓名</div>
+    </div>
+    <div class="input-group">
+      <label for="idInput">学号（10 位数字）<span class="req">*</span></label>
+      <input type="text" id="idInput" placeholder="请输入学号" maxlength="10" inputmode="numeric">
+      <div class="field-error" id="idError">请输入 10 位学号</div>
+    </div>
+    <button class="search-btn" id="searchBtn" disabled>查 询</button>
+  </div>
+
+  <div id="resultArea"></div>
+
+  <div class="footer">数据仅在浏览器中处理，不会上传至任何服务器。</div>
+</div>
+
+<script>
+(function() {
+  const AUTO_LOAD_FILE = 'data.xlsx';
+
+  let DATA = [];
+
+  const $ = id => document.getElementById(id);
+  const nameInput    = $('nameInput');
+  const idInput      = $('idInput');
+  const nameError    = $('nameError');
+  const idError      = $('idError');
+  const searchBtn    = $('searchBtn');
+  const resultArea   = $('resultArea');
+  const statusBanner = $('statusBanner');
+
+  /* ── Banner ── */
+  function showBanner(text, type) {
+    statusBanner.className = 'status-banner ' + type;
+    statusBanner.textContent = text;
+    statusBanner.style.display = 'flex';
+  }
+
+  /* ── Auto-load data.xlsx ── */
+  (async function autoLoad() {
+    showBanner('正在加载数据…', 'loading');
+    try {
+      const resp = await fetch(AUTO_LOAD_FILE, { cache: 'no-cache' });
+      if (!resp.ok) throw new Error(resp.status);
+      const buf = await resp.arrayBuffer();
+      const wb = XLSX.read(buf, { type: 'array', cellDates: true });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(ws, { defval: '', raw: false });
+      DATA = json.map(row => {
+        const clean = {};
+        for (const k in row) clean[k.trim()] = String(row[k]).trim();
+        return clean;
+      });
+      showBanner('✓ 数据已加载，共 ' + DATA.length + ' 条记录', 'success');
+      searchBtn.disabled = false;
+      setTimeout(() => { statusBanner.style.display = 'none'; }, 3000);
+    } catch (e) {
+      showBanner('数据文件加载失败，请联系团支书', 'fail');
+    }
+  })();
+
+  /* ── Validation ── */
+  idInput.addEventListener('input', () => {
+    idInput.value = idInput.value.replace(/\D/g, '').slice(0, 10);
+  });
+  function clearErrors() {
+    nameInput.classList.remove('input-error');
+    idInput.classList.remove('input-error');
+    nameError.style.display = 'none';
+    idError.style.display = 'none';
+  }
+
+  /* ── Search ── */
+  searchBtn.addEventListener('click', doSearch);
+  nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); idInput.focus(); } });
+  idInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+  function doSearch() {
+    clearErrors();
+    const name = nameInput.value.trim();
+    const sid  = idInput.value.trim();
+    let valid = true;
+
+    if (!name) {
+      nameInput.classList.add('input-error');
+      nameError.style.display = 'block';
+      valid = false;
+    }
+    if (!sid || sid.length !== 10) {
+      idInput.classList.add('input-error');
+      idError.style.display = 'block';
+      valid = false;
+    }
+    if (!valid) return;
+
+    const match = DATA.find(r => r['姓名'] === name && r['学号'] === sid);
+    if (!match) {
+      resultArea.innerHTML =
+        '<div class="msg not-found">' +
+          '<div class="msg-icon">🔍</div>' +
+          '<p>未找到匹配记录，请核对姓名和学号</p>' +
+        '</div>';
+      return;
+    }
+    renderResult(match);
+  }
+
+  /* ── Helpers ── */
+  function val(row, key) {
+    const v = row[key];
+    return (v === undefined || v === null || v === '' || v === '—') ? '' : v;
+  }
+  function displayVal(row, key) { return val(row, key) || '暂无'; }
+  function isEmpty(row, key)    { return !val(row, key); }
+
+  function parseDate(str) {
+    if (!str) return null;
+    const s = str.replace(/年/g,'-').replace(/月/g,'-').replace(/日/g,'').replace(/\//g,'-').trim();
+    const parts = s.split('-').map(p => parseInt(p, 10));
+    if (parts.length >= 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
+      return new Date(parts[0], parts[1]-1, parts[2]);
+    }
+    const d = new Date(str);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function addMonths(date, n) {
+    const d = new Date(date);
+    d.setMonth(d.getMonth() + n);
+    return d;
+  }
+
+  function fmtDate(d) {
+    return d.getFullYear() + '-' +
+      String(d.getMonth()+1).padStart(2,'0') + '-' +
+      String(d.getDate()).padStart(2,'0');
+  }
+
+  function esc(s) {
+    const el = document.createElement('span');
+    el.textContent = s;
+    return el.innerHTML;
+  }
+
+  /* ── Render ── */
+  function renderResult(row) {
+    const fields = [
+      { key: '入党申请书日期',   label: '提交入党申请书' },
+      { key: '入党申请书页数',   label: '入党申请书页数' },
+      { key: '团支部推优日期',   label: '团支部推优' },
+      { key: '确定积极分子日期', label: '确定为入党积极分子' },
+      { key: '确定发展对象日期', label: '确定为发展对象' },
+    ];
+
+    let html = '<div class="result-card">';
+    html += '<div class="result-name">' + esc(displayVal(row,'姓名')) + '</div>';
+    html += '<div class="result-id">学号 ' + esc(displayVal(row,'学号')) + '</div>';
+    html += '<div class="section-title">入党流程进度</div>';
+    html += '<div class="timeline">';
+
+    fields.forEach(f => {
+      const empty = isEmpty(row, f.key);
+      html += '<div class="timeline-item' + (empty ? ' empty' : '') + '">';
+      html += '<div class="tl-label">' + f.label + '</div>';
+      html += '<div class="tl-value' + (empty ? ' empty-val' : '') + '">' + esc(displayVal(row, f.key)) + '</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+
+    /* 思想汇报 */
+    const activistDateStr = val(row, '确定积极分子日期');
+    const activistDate = parseDate(activistDateStr);
+
+    html += '<div class="result-card">';
+    html += '<div class="section-title">思想汇报时间安排</div>';
+
+    if (!activistDate) {
+      html += '<div class="msg no-data"><p>尚未确定为入党积极分子，暂无思想汇报安排</p></div>';
+    } else {
+      const today = new Date(); today.setHours(0,0,0,0);
+      html += '<p style="font-size:0.8rem;color:var(--neutral-500);margin-bottom:0.8rem;">';
+      html += '根据确定积极分子日期（' + esc(activistDateStr) + '）推算，第一次不晚于三个月内，此后每三个月一次。</p>';
+      html += '<table class="report-table"><thead><tr><th>次数</th><th>截止日期</th><th>状态</th></tr></thead><tbody>';
+
+      for (let i = 1; i <= 8; i++) {
+        const deadline = addMonths(activistDate, i * 3);
+        const deadlineStr = fmtDate(deadline);
+        let badge;
+        if (today > deadline) {
+          badge = '<span class="badge badge-green">已到期</span>';
+        } else {
+          const diff = (deadline - today) / 864e5;
+          badge = diff <= 30
+            ? '<span class="badge badge-orange">即将到期</span>'
+            : '<span class="badge badge-gray">未到</span>';
+        }
+        html += '<tr><td>第 ' + i + ' 次</td><td>' + deadlineStr + '</td><td>' + badge + '</td></tr>';
+      }
+      html += '</tbody></table>';
+    }
+    html += '</div>';
+    resultArea.innerHTML = html;
+  }
+
+})();
+</script>
+</body>
+</html>
