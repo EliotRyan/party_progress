@@ -173,7 +173,8 @@ body::after{content:'';position:fixed;bottom:0;right:0;width:min(65vw,460px);hei
 
 <script>
 (function(){
-var ADMIN_PWD='2025000000';
+var PWD_HASH='eb386d9069640f0a325c03338e665e2d9572a8ac9e4bc3546b58aacdb580d961';
+async function sha256(s){var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('')}
 var DATA=[],FAQ=[];
 
 var nameIn=document.getElementById('nameIn'),idIn=document.getElementById('idIn');
@@ -235,8 +236,8 @@ adminBtn.onclick=function(){modal.classList.add('open');loadConfig()};
 modalClose.onclick=function(){modal.classList.remove('open')};
 modal.onclick=function(e){if(e.target===modal)modal.classList.remove('open')};
 pwdBtn.onclick=tryPwd;pwdIn.onkeydown=function(e){if(e.key==='Enter')tryPwd()};
-function tryPwd(){
-  if(pwdIn.value===ADMIN_PWD){step1.style.display='none';step2.style.display='block';pwdMsg.className='m-msg'}
+async function tryPwd(){
+  if(await sha256(pwdIn.value)===PWD_HASH){step1.style.display='none';step2.style.display='block';pwdMsg.className='m-msg'}
   else{setMsg(pwdMsg,'密码错误','err');pwdIn.value='';pwdIn.focus()}
 }
 function loadConfig(){var cfg=JSON.parse(localStorage.getItem('gh_cfg')||'{}');ghUser.value=cfg.user||'';ghRepo.value=cfg.repo||'';ghToken.value=cfg.token||''}
@@ -295,19 +296,19 @@ async function uploadFaq(file){
 function fileToB64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1])};r.onerror=rej;r.readAsDataURL(file)})}
 
 /* ── Search (feature 4: password as ID = name-only search) ── */
-idIn.oninput=function(){idIn.value=idIn.value.replace(/\D/g,'').slice(0,10)};
+idIn.oninput=function(){if(/^\d*$/.test(idIn.value))idIn.value=idIn.value.slice(0,10)};
 function clearErr(){nameIn.classList.remove('err');idIn.classList.remove('err');nameErr.style.display='none';idErr.style.display='none'}
 searchBtn.onclick=doSearch;
 nameIn.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();idIn.focus()}};
 idIn.onkeydown=function(e){if(e.key==='Enter')doSearch()};
 
-function doSearch(){
+async function doSearch(){
   clearErr();
   var n=nameIn.value.trim(),s=idIn.value.trim(),ok=1;
-  var isAdmin=(s===ADMIN_PWD);
+  var isAdmin=(await sha256(s)===PWD_HASH);
 
   if(!n){nameIn.classList.add('err');nameErr.style.display='block';ok=0}
-  if(!isAdmin&&(!s||s.length!==10)){idIn.classList.add('err');idErr.style.display='block';ok=0}
+  if(!isAdmin&&(!/^\d{10}$/.test(s))){idIn.classList.add('err');idErr.style.display='block';ok=0}
   if(!ok)return;
 
   var m;
