@@ -6,548 +6,331 @@
 <title>入党流程信息查询</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap');
-
-  :root {
-    --red-900: #7f1d1d;
-    --red-800: #991b1b;
-    --red-700: #b91c1c;
-    --red-600: #dc2626;
-    --red-500: #ef4444;
-    --red-100: #fee2e2;
-    --red-50: #fef2f2;
-    --gold-500: #d4a843;
-    --gold-400: #e2bd5e;
-    --gold-300: #ebd08b;
-    --gold-200: #f0dda0;
-    --green-700: #15803d;
-    --green-100: #dcfce7;
-    --orange-600: #ea580c;
-    --orange-100: #ffedd5;
-    --blue-600: #2563eb;
-    --blue-100: #dbeafe;
-    --neutral-900: #1a1a1a;
-    --neutral-700: #404040;
-    --neutral-500: #737373;
-    --neutral-300: #d4d4d4;
-    --neutral-200: #e5e5e5;
-    --neutral-100: #f5f5f5;
-    --neutral-50: #fafafa;
-    --bg: #fdfbf7;
-    --card-bg: #ffffff;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-    --radius: 12px;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Noto Sans SC', sans-serif;
-    background: var(--bg);
-    color: var(--neutral-900);
-    min-height: 100vh;
-    line-height: 1.6;
-  }
-
-  /* ── Header ── */
-  .header {
-    background: linear-gradient(135deg, var(--red-800) 0%, var(--red-700) 50%, var(--red-900) 100%);
-    padding: 1.8rem 1.5rem 1.6rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.08) 0%, transparent 60%);
-    pointer-events: none;
-  }
-
-  .header-logo {
-    position: absolute;
-    left: 1.2rem;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 38px;
-    /* Red → Gold color transform */
-    filter: brightness(0) invert(78%) sepia(40%) saturate(600%) hue-rotate(350deg) brightness(95%);
-    opacity: 0.85;
-    z-index: 1;
-  }
-
-  .header h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: clamp(1.3rem, 4vw, 1.8rem);
-    color: #fff;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    position: relative;
-  }
-  .header .subtitle {
-    color: var(--gold-300);
-    font-size: clamp(0.65rem, 2vw, 0.78rem);
-    margin-top: 0.35rem;
-    font-weight: 300;
-    letter-spacing: 0.08em;
-    position: relative;
-  }
-
-  /* ── Container ── */
-  .container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 1.5rem;
-  }
-
-  /* ── Status banner ── */
-  .status-banner {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    margin-bottom: 1rem;
-    animation: slideUp 0.3s ease-out;
-  }
-  .status-banner.loading { background: var(--blue-100); color: var(--blue-600); }
-  .status-banner.success { background: var(--green-100); color: var(--green-700); }
-  .status-banner.fail    { background: var(--orange-100); color: var(--orange-600); }
-
-  /* ── Search ── */
-  .search-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-md);
-    padding: 1.8rem 1.5rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(0,0,0,0.04);
-  }
-  .search-card h2 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1.2rem;
-    color: var(--neutral-900);
-  }
-
-  .input-group { margin-bottom: 1rem; }
-  .input-group label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--neutral-700);
-    margin-bottom: 0.3rem;
-  }
-  .input-group label .req { color: var(--red-600); margin-left: 2px; }
-  .input-group input {
-    width: 100%;
-    padding: 0.7rem 0.9rem;
-    font-size: 0.92rem;
-    border: 1.5px solid var(--neutral-300);
-    border-radius: 8px;
-    background: var(--neutral-50);
-    font-family: inherit;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    color: var(--neutral-900);
-  }
-  .input-group input:focus {
-    outline: none;
-    border-color: var(--red-500);
-    box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
-    background: #fff;
-  }
-  .input-group input::placeholder { color: var(--neutral-500); font-size: 0.85rem; }
-  .input-group input.input-error { border-color: var(--red-500); background: var(--red-50); }
-  .field-error {
-    font-size: 0.75rem;
-    color: var(--red-600);
-    margin-top: 0.25rem;
-    display: none;
-  }
-
-  .search-btn {
-    width: 100%;
-    padding: 0.75rem;
-    background: linear-gradient(135deg, var(--red-700), var(--red-800));
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.05em;
-    margin-top: 0.3rem;
-  }
-  .search-btn:hover {
-    background: linear-gradient(135deg, var(--red-600), var(--red-700));
-    box-shadow: 0 4px 12px rgba(185,28,28,0.3);
-    transform: translateY(-1px);
-  }
-  .search-btn:active { transform: translateY(0); }
-  .search-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  /* ── Results ── */
-  .result-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-md);
-    padding: 1.8rem 1.5rem;
-    border: 1px solid rgba(0,0,0,0.04);
-    animation: slideUp 0.35s ease-out;
-    margin-bottom: 1rem;
-  }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .result-name {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--red-800);
-    margin-bottom: 0.2rem;
-  }
-  .result-id {
-    font-size: 0.8rem;
-    color: var(--neutral-500);
-    margin-bottom: 1.2rem;
-    font-family: 'Menlo', 'Consolas', monospace;
-  }
-
-  .section-title {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--neutral-900);
-    margin-bottom: 0.8rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 2px solid var(--red-100);
-  }
-
-  .timeline {
-    position: relative;
-    padding-left: 1.6rem;
-  }
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 5px; top: 4px; bottom: 4px;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--red-500), var(--gold-500));
-    border-radius: 1px;
-  }
-
-  .timeline-item {
-    position: relative;
-    padding-bottom: 1.2rem;
-  }
-  .timeline-item:last-child { padding-bottom: 0; }
-  .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -1.6rem; top: 6px;
-    width: 10px; height: 10px;
-    background: var(--red-600);
-    border-radius: 50%;
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 2px var(--red-300);
-  }
-  .timeline-item.empty::before {
-    background: var(--neutral-300);
-    box-shadow: 0 0 0 2px var(--neutral-200);
-  }
-
-  .tl-label { font-size: 0.78rem; font-weight: 500; color: var(--neutral-500); }
-  .tl-value { font-size: 0.95rem; font-weight: 500; color: var(--neutral-900); margin-top: 0.1rem; }
-  .tl-value.empty-val { color: var(--neutral-500); font-weight: 400; font-style: italic; font-size: 0.85rem; }
-
-  /* ── 思想汇报表格 ── */
-  .report-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-    margin-top: 0.5rem;
-  }
-  .report-table th {
-    background: var(--neutral-100);
-    font-weight: 500;
-    color: var(--neutral-700);
-    padding: 0.5rem 0.6rem;
-    text-align: left;
-    border-bottom: 1px solid var(--neutral-200);
-  }
-  .report-table td {
-    padding: 0.5rem 0.6rem;
-    border-bottom: 1px solid var(--neutral-100);
-    vertical-align: middle;
-  }
-  .report-table tr:last-child td { border-bottom: none; }
-
-  .badge {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 500;
-    padding: 0.15em 0.5em;
-    border-radius: 4px;
-  }
-  .badge-green  { background: var(--green-100); color: var(--green-700); }
-  .badge-orange { background: var(--orange-100); color: var(--orange-600); }
-  .badge-gray   { background: var(--neutral-100); color: var(--neutral-500); }
-
-  .msg {
-    text-align: center;
-    padding: 2rem 1rem;
-    border-radius: var(--radius);
-    animation: slideUp 0.3s ease-out;
-  }
-  .msg.not-found { background: var(--neutral-100); color: var(--neutral-700); }
-  .msg.no-data   { color: var(--neutral-500); font-size: 0.85rem; }
-  .msg .msg-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
-  .msg p { font-size: 0.9rem; }
-
-  .footer {
-    text-align: center;
-    padding: 2rem 1rem 1.5rem;
-    font-size: 0.72rem;
-    color: var(--neutral-500);
-  }
-
-  @media (max-width: 480px) {
-    .container { padding: 1rem; }
-    .search-card, .result-card { padding: 1.2rem; }
-    .report-table { font-size: 0.76rem; }
-    .report-table th, .report-table td { padding: 0.4rem; }
-    .header-logo { height: 28px; left: 0.8rem; }
-  }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap');
+:root{--red-900:#7f1d1d;--red-800:#991b1b;--red-700:#b91c1c;--red-600:#dc2626;--red-500:#ef4444;--red-100:#fee2e2;--red-50:#fef2f2;--gold-500:#d4a843;--gold-300:#ebd08b;--green-700:#15803d;--green-100:#dcfce7;--orange-600:#ea580c;--orange-100:#ffedd5;--blue-600:#2563eb;--blue-100:#dbeafe;--neutral-900:#1a1a1a;--neutral-700:#404040;--neutral-500:#737373;--neutral-300:#d4d4d4;--neutral-200:#e5e5e5;--neutral-100:#f5f5f5;--neutral-50:#fafafa;--bg:#fdfbf7;--card-bg:#fff;--radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--neutral-900);min-height:100vh;line-height:1.6}
+body::after{content:'';position:fixed;bottom:0;right:0;width:min(65vw,460px);height:min(46vh,330px);background:url("watermark.png") no-repeat bottom right/contain;opacity:.04;pointer-events:none;z-index:0}
+.header{background:linear-gradient(135deg,var(--red-800) 0%,var(--red-700) 50%,var(--red-900) 100%);padding:1.6rem 1.5rem;text-align:center;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:1rem}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 0%,rgba(255,255,255,.08) 0%,transparent 60%);pointer-events:none}
+.header-logo{width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:center top;filter:brightness(0) invert(78%) sepia(40%) saturate(600%) hue-rotate(350deg) brightness(95%);opacity:.9;flex-shrink:0;position:relative}
+.header-text{position:relative;text-align:center}
+.header h1{font-family:'Noto Serif SC',serif;font-size:clamp(1.2rem,3.8vw,1.7rem);color:#fff;font-weight:700;letter-spacing:.06em}
+.header .subtitle{color:var(--gold-300);font-size:clamp(.6rem,1.8vw,.75rem);margin-top:.3rem;font-weight:300;letter-spacing:.06em}
+.admin-btn{position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);font-size:.7rem;padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .2s;z-index:2}
+.admin-btn:hover{background:rgba(255,255,255,.2);color:#fff}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius);padding:1.8rem;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:1rem;font-weight:600;margin-bottom:.8rem;color:var(--red-800)}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--neutral-500);line-height:1}
+.modal-close:hover{color:var(--neutral-900)}
+.m-label{display:block;font-size:.78rem;font-weight:500;color:var(--neutral-700);margin-bottom:.25rem;margin-top:.7rem}
+.m-input{width:100%;padding:.5rem .7rem;font-size:.85rem;border:1.5px solid var(--neutral-300);border-radius:8px;font-family:inherit;background:var(--neutral-50)}
+.m-input:focus{outline:none;border-color:var(--red-500);background:#fff}
+.m-btn{width:100%;padding:.65rem;background:var(--red-700);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:500;font-family:inherit;cursor:pointer;margin-top:.8rem;transition:all .2s}
+.m-btn:hover{background:var(--red-600)}
+.m-btn:disabled{opacity:.5;cursor:not-allowed}
+.m-btn.secondary{background:var(--neutral-100);color:var(--neutral-700);margin-top:.5rem}
+.m-btn.secondary:hover{background:var(--neutral-200)}
+.m-msg{font-size:.78rem;margin-top:.5rem;padding:.5rem .7rem;border-radius:6px;display:none}
+.m-msg.ok{display:block;background:var(--green-100);color:var(--green-700)}
+.m-msg.err{display:block;background:var(--red-100);color:var(--red-600)}
+.m-msg.info{display:block;background:var(--blue-100);color:var(--blue-600)}
+.upload-zone{border:2px dashed var(--neutral-300);border-radius:8px;padding:1.3rem;text-align:center;position:relative;cursor:pointer;transition:all .2s;margin-top:.7rem}
+.upload-zone:hover{border-color:var(--red-500);background:var(--red-50)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-zone p{font-size:.82rem;color:var(--neutral-500)}
+.m-note{font-size:.72rem;color:var(--neutral-500);line-height:1.5;background:var(--neutral-100);padding:.6rem;border-radius:6px;margin-top:.7rem}
+.m-divider{border:none;border-top:1px solid var(--neutral-200);margin:1rem 0 .5rem}
+.step-badge{display:inline-block;width:1.3rem;height:1.3rem;border-radius:50%;background:var(--red-700);color:#fff;font-size:.7rem;text-align:center;line-height:1.3rem;margin-right:.3rem}
+.container{max-width:720px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
+.banner{display:none;align-items:center;gap:.5rem;padding:.55rem 1rem;border-radius:8px;font-size:.8rem;margin-bottom:1rem}
+.banner.show{display:flex}
+.banner.loading{background:var(--blue-100);color:var(--blue-600)}
+.banner.success{background:var(--green-100);color:var(--green-700)}
+.banner.fail{background:var(--orange-100);color:var(--orange-600)}
+.search-card,.result-card{background:var(--card-bg);border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,.08);padding:1.8rem 1.5rem;border:1px solid rgba(0,0,0,.04);margin-bottom:1.2rem}
+.result-card{animation:su .35s ease-out}
+@keyframes su{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.search-card h2{font-family:'Noto Serif SC',serif;font-size:1.1rem;font-weight:600;margin-bottom:1.2rem;color:var(--neutral-900)}
+.input-group{margin-bottom:1rem}
+.input-group label{display:block;font-size:.8rem;font-weight:500;color:var(--neutral-700);margin-bottom:.3rem}
+.input-group label .req{color:var(--red-600);margin-left:2px}
+.input-group input{width:100%;padding:.7rem .9rem;font-size:.92rem;border:1.5px solid var(--neutral-300);border-radius:8px;background:var(--neutral-50);font-family:inherit;transition:border-color .2s,box-shadow .2s;color:var(--neutral-900)}
+.input-group input:focus{outline:none;border-color:var(--red-500);box-shadow:0 0 0 3px rgba(239,68,68,.1);background:#fff}
+.input-group input::placeholder{color:var(--neutral-500);font-size:.85rem}
+.input-group input.err{border-color:var(--red-500);background:var(--red-50)}
+.field-err{font-size:.75rem;color:var(--red-600);margin-top:.25rem;display:none}
+.search-btn{width:100%;padding:.75rem;background:linear-gradient(135deg,var(--red-700),var(--red-800));color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:500;font-family:inherit;cursor:pointer;transition:all .2s;letter-spacing:.05em;margin-top:.3rem}
+.search-btn:hover{background:linear-gradient(135deg,var(--red-600),var(--red-700));box-shadow:0 4px 12px rgba(185,28,28,.3);transform:translateY(-1px)}
+.search-btn:active{transform:translateY(0)}
+.search-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.rn{font-family:'Noto Serif SC',serif;font-size:1.25rem;font-weight:700;color:var(--red-800);margin-bottom:.2rem}
+.ri{font-size:.8rem;color:var(--neutral-500);margin-bottom:1.2rem;font-family:'Menlo','Consolas',monospace}
+.secT{font-family:'Noto Serif SC',serif;font-size:.95rem;font-weight:600;color:var(--neutral-900);margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:2px solid var(--red-100)}
+.tl{position:relative;padding-left:1.6rem}
+.tl::before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:linear-gradient(to bottom,var(--red-500),var(--gold-500));border-radius:1px}
+.ti{position:relative;padding-bottom:1.1rem}
+.ti:last-child{padding-bottom:0}
+.ti::before{content:'';position:absolute;left:-1.6rem;top:6px;width:10px;height:10px;background:var(--red-600);border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(239,68,68,.3)}
+.ti.ep::before{background:var(--neutral-300);box-shadow:0 0 0 2px var(--neutral-200)}
+.tll{font-size:.78rem;font-weight:500;color:var(--neutral-500)}
+.tv{font-size:.92rem;font-weight:500;color:var(--neutral-900);margin-top:.1rem}
+.tv.ev{color:var(--neutral-500);font-weight:400;font-style:italic;font-size:.83rem}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.5rem}
+.tri{background:var(--neutral-50);border-radius:8px;padding:.8rem 1rem;text-align:center;border:1px solid var(--neutral-200)}
+.tri .trl{font-size:.78rem;color:var(--neutral-500);margin-bottom:.3rem}
+.tri .trv{font-size:.9rem;font-weight:600}
+.tri .trv.pa{color:var(--green-700)}
+.tri .trv.pe{color:var(--neutral-500);font-weight:400;font-style:italic;font-size:.82rem}
+.rt{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:.5rem}
+.rt th{background:var(--neutral-100);font-weight:500;color:var(--neutral-700);padding:.45rem .5rem;text-align:center;border-bottom:1px solid var(--neutral-200);white-space:nowrap}
+.rt td{padding:.45rem .5rem;border-bottom:1px solid var(--neutral-100);vertical-align:middle;text-align:center}
+.rt tr:last-child td{border-bottom:none}
+.rt tr.br{background:var(--neutral-50)}
+.bd{display:inline-block;font-size:.7rem;font-weight:500;padding:.12em .45em;border-radius:4px;white-space:nowrap}
+.bdg{background:var(--green-100);color:var(--green-700)}
+.bdo{background:var(--orange-100);color:var(--orange-600)}
+.bdy{background:var(--neutral-100);color:var(--neutral-500)}
+.erd td{text-align:center;color:var(--neutral-500);font-size:1.1rem;letter-spacing:.3em;padding:.4rem 0 .1rem}
+.tb{margin-top:.8rem;padding:.7rem .9rem;background:var(--red-50);border-radius:8px;border-left:3px solid var(--red-500);font-size:.78rem;color:var(--neutral-700);line-height:1.6}
+.tb strong{color:var(--red-700)}
+.msg{text-align:center;padding:2rem 1rem;border-radius:var(--radius);animation:su .3s ease-out}
+.msg.nf{background:var(--neutral-100);color:var(--neutral-700)}
+.msg.nd{color:var(--neutral-500);font-size:.85rem}
+.msg .mi{font-size:1.8rem;margin-bottom:.5rem}
+.msg p{font-size:.9rem}
+.ft{text-align:center;padding:2rem 1rem 1.5rem;font-size:.72rem;color:var(--neutral-500)}
+@media(max-width:480px){.container{padding:1rem}.search-card,.result-card{padding:1.2rem}.header{gap:.6rem;padding:1.4rem 1rem}.header-logo{width:34px;height:34px}.rt{font-size:.72rem}.rt th,.rt td{padding:.35rem .3rem}.admin-btn{font-size:.65rem;padding:.25rem .45rem;right:.6rem}}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <img src="logo.png" alt="中国人民大学" class="header-logo">
-  <h1>入党流程信息查询</h1>
-  <div class="subtitle">中国人民大学应用经济学院2025级本科1班团支部</div>
+  <img src="logo.png" alt="" class="header-logo">
+  <div class="header-text"><h1>入党流程信息查询</h1><div class="subtitle">中国人民大学应用经济学院2025级本科1班团支部</div></div>
+  <button class="admin-btn" id="adminBtn">管理</button>
+</div>
+
+<!-- Admin Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <h3>管理员 · 数据更新</h3>
+
+    <!-- Step 1: Password -->
+    <div id="step1">
+      <label class="m-label">管理员密码</label>
+      <input type="password" class="m-input" id="pwdIn" placeholder="请输入密码">
+      <button class="m-btn" id="pwdBtn">验证</button>
+      <div class="m-msg" id="pwdMsg"></div>
+    </div>
+
+    <!-- Step 2: Config + Upload (hidden until password OK) -->
+    <div id="step2" style="display:none">
+
+      <!-- GitHub config -->
+      <div id="configArea">
+        <p style="font-size:.78rem;color:var(--neutral-500);margin-bottom:.5rem">首次使用需配置 GitHub 信息，配置会保存在你的浏览器中。</p>
+        <label class="m-label"><span class="step-badge">1</span>GitHub 用户名</label>
+        <input type="text" class="m-input" id="ghUser" placeholder="你的 GitHub 用户名">
+        <label class="m-label"><span class="step-badge">2</span>仓库名</label>
+        <input type="text" class="m-input" id="ghRepo" placeholder="如 party-progress">
+        <label class="m-label"><span class="step-badge">3</span>Personal Access Token</label>
+        <input type="password" class="m-input" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+        <button class="m-btn secondary" id="saveConfig">保存配置</button>
+        <div class="m-msg" id="configMsg"></div>
+        <div class="m-note">
+          Token 获取方式：GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token → 权限勾选 Contents（Read and write）→ 仅授权给本仓库 → 生成并复制。
+        </div>
+      </div>
+
+      <hr class="m-divider">
+
+      <!-- Upload -->
+      <label class="m-label" style="margin-top:0"><span class="step-badge">4</span>上传新数据</label>
+      <div class="upload-zone" id="upZone">
+        <input type="file" id="fileIn" accept=".xlsx,.xls">
+        <p>📊 点击或拖拽 xlsx 文件</p>
+      </div>
+      <div class="m-msg" id="upMsg"></div>
+    </div>
+  </div>
 </div>
 
 <div class="container">
-
-  <div id="statusBanner" class="status-banner loading" style="display:none;"></div>
-
-  <!-- Search -->
+  <div class="banner" id="banner"></div>
   <div class="search-card">
     <h2>查询入党流程进度</h2>
-    <div class="input-group">
-      <label for="nameInput">姓名 <span class="req">*</span></label>
-      <input type="text" id="nameInput" placeholder="请输入姓名">
-      <div class="field-error" id="nameError">请输入姓名</div>
-    </div>
-    <div class="input-group">
-      <label for="idInput">学号（10 位数字）<span class="req">*</span></label>
-      <input type="text" id="idInput" placeholder="请输入学号" maxlength="10" inputmode="numeric">
-      <div class="field-error" id="idError">请输入 10 位学号</div>
-    </div>
+    <div class="input-group"><label for="nameIn">姓名 <span class="req">*</span></label><input type="text" id="nameIn" placeholder="请输入姓名"><div class="field-err" id="nameErr">请输入姓名</div></div>
+    <div class="input-group"><label for="idIn">学号（10 位数字）<span class="req">*</span></label><input type="text" id="idIn" placeholder="请输入学号" maxlength="10" inputmode="numeric"><div class="field-err" id="idErr">请输入 10 位学号</div></div>
     <button class="search-btn" id="searchBtn" disabled>查 询</button>
   </div>
-
   <div id="resultArea"></div>
-
-  <div class="footer">数据仅在浏览器中处理，不会上传至任何服务器。</div>
+  <div class="ft">数据仅在浏览器中处理，不会上传至任何服务器。</div>
 </div>
 
 <script>
-(function() {
-  const AUTO_LOAD_FILE = 'data.xlsx';
+(function(){
+var ADMIN_PWD='ruc2025';
+var DATA=[];
 
-  let DATA = [];
+/* DOM */
+var nameIn=document.getElementById('nameIn'),idIn=document.getElementById('idIn');
+var nameErr=document.getElementById('nameErr'),idErr=document.getElementById('idErr');
+var searchBtn=document.getElementById('searchBtn'),resultArea=document.getElementById('resultArea');
+var banner=document.getElementById('banner');
+var modal=document.getElementById('modal'),adminBtn=document.getElementById('adminBtn'),modalClose=document.getElementById('modalClose');
+var pwdIn=document.getElementById('pwdIn'),pwdBtn=document.getElementById('pwdBtn'),pwdMsg=document.getElementById('pwdMsg');
+var step1=document.getElementById('step1'),step2=document.getElementById('step2');
+var ghUser=document.getElementById('ghUser'),ghRepo=document.getElementById('ghRepo'),ghToken=document.getElementById('ghToken');
+var saveConfig=document.getElementById('saveConfig'),configMsg=document.getElementById('configMsg');
+var fileIn=document.getElementById('fileIn'),upZone=document.getElementById('upZone'),upMsg=document.getElementById('upMsg');
 
-  const $ = id => document.getElementById(id);
-  const nameInput    = $('nameInput');
-  const idInput      = $('idInput');
-  const nameError    = $('nameError');
-  const idError      = $('idError');
-  const searchBtn    = $('searchBtn');
-  const resultArea   = $('resultArea');
-  const statusBanner = $('statusBanner');
+function showBanner(t,c){banner.className='banner show '+c;banner.textContent=t}
+function setMsg(el,t,c){el.className='m-msg '+c;el.textContent=t}
 
-  /* ── Banner ── */
-  function showBanner(text, type) {
-    statusBanner.className = 'status-banner ' + type;
-    statusBanner.textContent = text;
-    statusBanner.style.display = 'flex';
-  }
+/* ── Auto load ── */
+(async function(){
+  showBanner('正在加载数据…','loading');
+  try{
+    var r=await fetch('data.xlsx',{cache:'no-cache'});if(!r.ok)throw 0;
+    parseXlsx(await r.arrayBuffer());
+    showBanner('✓ 数据已加载，共 '+DATA.length+' 条记录','success');
+    setTimeout(function(){banner.classList.remove('show')},3000);
+  }catch(e){showBanner('数据加载失败，请联系团支书','fail')}
+})();
 
-  /* ── Auto-load data.xlsx ── */
-  (async function autoLoad() {
-    showBanner('正在加载数据…', 'loading');
-    try {
-      const resp = await fetch(AUTO_LOAD_FILE, { cache: 'no-cache' });
-      if (!resp.ok) throw new Error(resp.status);
-      const buf = await resp.arrayBuffer();
-      const wb = XLSX.read(buf, { type: 'array', cellDates: true });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(ws, { defval: '', raw: false });
-      DATA = json.map(row => {
-        const clean = {};
-        for (const k in row) clean[k.trim()] = String(row[k]).trim();
-        return clean;
-      });
-      showBanner('✓ 数据已加载，共 ' + DATA.length + ' 条记录', 'success');
-      searchBtn.disabled = false;
-      setTimeout(() => { statusBanner.style.display = 'none'; }, 3000);
-    } catch (e) {
-      showBanner('数据文件加载失败，请联系团支书', 'fail');
-    }
-  })();
+function parseXlsx(buf){
+  var wb=XLSX.read(buf,{type:'array',cellDates:true});
+  var ws=wb.Sheets[wb.SheetNames[0]];
+  var j=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
+  DATA=j.map(function(r){var c={};for(var k in r)c[k.trim()]=String(r[k]).trim();return c});
+  searchBtn.disabled=false;
+}
 
-  /* ── Validation ── */
-  idInput.addEventListener('input', () => {
-    idInput.value = idInput.value.replace(/\D/g, '').slice(0, 10);
-  });
-  function clearErrors() {
-    nameInput.classList.remove('input-error');
-    idInput.classList.remove('input-error');
-    nameError.style.display = 'none';
-    idError.style.display = 'none';
-  }
+/* ── Admin modal ── */
+adminBtn.onclick=function(){modal.classList.add('open');loadConfig()};
+modalClose.onclick=function(){modal.classList.remove('open')};
+modal.onclick=function(e){if(e.target===modal)modal.classList.remove('open')};
 
-  /* ── Search ── */
-  searchBtn.addEventListener('click', doSearch);
-  nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); idInput.focus(); } });
-  idInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+pwdBtn.onclick=tryPwd;pwdIn.onkeydown=function(e){if(e.key==='Enter')tryPwd()};
+function tryPwd(){
+  if(pwdIn.value===ADMIN_PWD){step1.style.display='none';step2.style.display='block';pwdMsg.className='m-msg'}
+  else{setMsg(pwdMsg,'密码错误','err');pwdIn.value='';pwdIn.focus()}
+}
 
-  function doSearch() {
-    clearErrors();
-    const name = nameInput.value.trim();
-    const sid  = idInput.value.trim();
-    let valid = true;
+/* ── GitHub config ── */
+function loadConfig(){
+  var cfg=JSON.parse(localStorage.getItem('gh_cfg')||'{}');
+  ghUser.value=cfg.user||'';ghRepo.value=cfg.repo||'';ghToken.value=cfg.token||'';
+}
+saveConfig.onclick=function(){
+  var u=ghUser.value.trim(),r=ghRepo.value.trim(),t=ghToken.value.trim();
+  if(!u||!r||!t){setMsg(configMsg,'请填写完整','err');return}
+  localStorage.setItem('gh_cfg',JSON.stringify({user:u,repo:r,token:t}));
+  setMsg(configMsg,'✓ 配置已保存','ok');
+};
 
-    if (!name) {
-      nameInput.classList.add('input-error');
-      nameError.style.display = 'block';
-      valid = false;
-    }
-    if (!sid || sid.length !== 10) {
-      idInput.classList.add('input-error');
-      idError.style.display = 'block';
-      valid = false;
-    }
-    if (!valid) return;
+/* ── Upload & push to GitHub ── */
+fileIn.onchange=function(e){if(e.target.files.length)handleUpload(e.target.files[0])};
+upZone.ondragover=function(e){e.preventDefault();upZone.style.borderColor='#ef4444'};
+upZone.ondragleave=function(){upZone.style.borderColor=''};
+upZone.ondrop=function(e){e.preventDefault();upZone.style.borderColor='';if(e.dataTransfer.files.length)handleUpload(e.dataTransfer.files[0])};
 
-    const match = DATA.find(r => r['姓名'] === name && r['学号'] === sid);
-    if (!match) {
-      resultArea.innerHTML =
-        '<div class="msg not-found">' +
-          '<div class="msg-icon">🔍</div>' +
-          '<p>未找到匹配记录，请核对姓名和学号</p>' +
-        '</div>';
-      return;
-    }
-    renderResult(match);
-  }
+async function handleUpload(file){
+  var cfg=JSON.parse(localStorage.getItem('gh_cfg')||'{}');
+  if(!cfg.user||!cfg.repo||!cfg.token){setMsg(upMsg,'请先填写并保存 GitHub 配置','err');return}
 
-  /* ── Helpers ── */
-  function val(row, key) {
-    const v = row[key];
-    return (v === undefined || v === null || v === '' || v === '—') ? '' : v;
-  }
-  function displayVal(row, key) { return val(row, key) || '暂无'; }
-  function isEmpty(row, key)    { return !val(row, key); }
+  setMsg(upMsg,'正在上传到 GitHub…','info');
 
-  function parseDate(str) {
-    if (!str) return null;
-    const s = str.replace(/年/g,'-').replace(/月/g,'-').replace(/日/g,'').replace(/\//g,'-').trim();
-    const parts = s.split('-').map(p => parseInt(p, 10));
-    if (parts.length >= 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
-      return new Date(parts[0], parts[1]-1, parts[2]);
-    }
-    const d = new Date(str);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  function addMonths(date, n) {
-    const d = new Date(date);
-    d.setMonth(d.getMonth() + n);
-    return d;
-  }
-
-  function fmtDate(d) {
-    return d.getFullYear() + '-' +
-      String(d.getMonth()+1).padStart(2,'0') + '-' +
-      String(d.getDate()).padStart(2,'0');
-  }
-
-  function esc(s) {
-    const el = document.createElement('span');
-    el.textContent = s;
-    return el.innerHTML;
-  }
-
-  /* ── Render ── */
-  function renderResult(row) {
-    const fields = [
-      { key: '入党申请书日期',   label: '提交入党申请书' },
-      { key: '入党申请书页数',   label: '入党申请书页数' },
-      { key: '团支部推优日期',   label: '团支部推优' },
-      { key: '确定积极分子日期', label: '确定为入党积极分子' },
-      { key: '确定发展对象日期', label: '确定为发展对象' },
-    ];
-
-    let html = '<div class="result-card">';
-    html += '<div class="result-name">' + esc(displayVal(row,'姓名')) + '</div>';
-    html += '<div class="result-id">学号 ' + esc(displayVal(row,'学号')) + '</div>';
-    html += '<div class="section-title">入党流程进度</div>';
-    html += '<div class="timeline">';
-
-    fields.forEach(f => {
-      const empty = isEmpty(row, f.key);
-      html += '<div class="timeline-item' + (empty ? ' empty' : '') + '">';
-      html += '<div class="tl-label">' + f.label + '</div>';
-      html += '<div class="tl-value' + (empty ? ' empty-val' : '') + '">' + esc(displayVal(row, f.key)) + '</div>';
-      html += '</div>';
+  try{
+    /* Read file as base64 */
+    var b64=await new Promise(function(res,rej){
+      var r=new FileReader();r.onload=function(){res(r.result.split(',')[1])};r.onerror=rej;r.readAsDataURL(file);
     });
-    html += '</div></div>';
 
-    /* 思想汇报 */
-    const activistDateStr = val(row, '确定积极分子日期');
-    const activistDate = parseDate(activistDateStr);
+    /* Get current file SHA */
+    var api='https://api.github.com/repos/'+cfg.user+'/'+cfg.repo+'/contents/data.xlsx';
+    var headers={'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json'};
+    var sha='';
+    try{
+      var cur=await fetch(api,{headers:headers});
+      if(cur.ok){var cj=await cur.json();sha=cj.sha}
+    }catch(e){}
 
-    html += '<div class="result-card">';
-    html += '<div class="section-title">思想汇报时间安排</div>';
+    /* Push new file */
+    var body={message:'更新数据 '+new Date().toLocaleString('zh-CN'),content:b64};
+    if(sha)body.sha=sha;
+    var resp=await fetch(api,{method:'PUT',headers:headers,body:JSON.stringify(body)});
 
-    if (!activistDate) {
-      html += '<div class="msg no-data"><p>尚未确定为入党积极分子，暂无思想汇报安排</p></div>';
-    } else {
-      const today = new Date(); today.setHours(0,0,0,0);
-      html += '<p style="font-size:0.8rem;color:var(--neutral-500);margin-bottom:0.8rem;">';
-      html += '根据确定积极分子日期（' + esc(activistDateStr) + '）推算，第一次不晚于三个月内，此后每三个月一次。</p>';
-      html += '<table class="report-table"><thead><tr><th>次数</th><th>截止日期</th><th>状态</th></tr></thead><tbody>';
+    if(!resp.ok){var errBody=await resp.json();throw new Error(errBody.message||resp.status)}
 
-      for (let i = 1; i <= 8; i++) {
-        const deadline = addMonths(activistDate, i * 3);
-        const deadlineStr = fmtDate(deadline);
-        let badge;
-        if (today > deadline) {
-          badge = '<span class="badge badge-green">已到期</span>';
-        } else {
-          const diff = (deadline - today) / 864e5;
-          badge = diff <= 30
-            ? '<span class="badge badge-orange">即将到期</span>'
-            : '<span class="badge badge-gray">未到</span>';
-        }
-        html += '<tr><td>第 ' + i + ' 次</td><td>' + deadlineStr + '</td><td>' + badge + '</td></tr>';
-      }
-      html += '</tbody></table>';
-    }
-    html += '</div>';
-    resultArea.innerHTML = html;
+    /* Also update local data */
+    var rawBuf=Uint8Array.from(atob(b64),function(c){return c.charCodeAt(0)}).buffer;
+    parseXlsx(rawBuf);
+
+    setMsg(upMsg,'✓ 已更新！共 '+DATA.length+' 条记录。GitHub Pages 将在 1-2 分钟内自动部署。','ok');
+    showBanner('✓ 数据已更新，共 '+DATA.length+' 条记录','success');
+  }catch(e){
+    setMsg(upMsg,'上传失败：'+e.message,'err');
   }
+}
 
+/* ── Search ── */
+idIn.oninput=function(){idIn.value=idIn.value.replace(/\D/g,'').slice(0,10)};
+function clearErr(){nameIn.classList.remove('err');idIn.classList.remove('err');nameErr.style.display='none';idErr.style.display='none'}
+searchBtn.onclick=doSearch;
+nameIn.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();idIn.focus()}};
+idIn.onkeydown=function(e){if(e.key==='Enter')doSearch()};
+function doSearch(){
+  clearErr();var n=nameIn.value.trim(),s=idIn.value.trim(),ok=1;
+  if(!n){nameIn.classList.add('err');nameErr.style.display='block';ok=0}
+  if(!s||s.length!==10){idIn.classList.add('err');idErr.style.display='block';ok=0}
+  if(!ok)return;
+  var m;for(var i=0;i<DATA.length;i++)if(DATA[i]['姓名']===n&&DATA[i]['学号']===s){m=DATA[i];break}
+  if(!m){resultArea.innerHTML='<div class="msg nf"><div class="mi">🔍</div><p>未找到匹配记录，请核对姓名和学号</p></div>';return}
+  render(m);
+}
+
+/* ── Helpers ── */
+function v(r,k){var x=r[k];return(x==null||x===''||x==='—')?'':x}
+function dv(r,k){return v(r,k)||'暂无信息'}
+function ep(r,k){return!v(r,k)}
+function pd(s){if(!s)return null;s=s.replace(/年/g,'-').replace(/月/g,'-').replace(/日/g,'').replace(/\//g,'-').trim();var p=s.split('-').map(Number);if(p.length>=3&&p[0]>0&&p[1]>0&&p[2]>0)return new Date(p[0],p[1]-1,p[2]);var d=new Date(s);return isNaN(d)?null:d}
+function am(d,n){var r=new Date(d);r.setMonth(r.getMonth()+n);return r}
+function fm(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function es(s){var e=document.createElement('span');e.textContent=s;return e.innerHTML}
+
+/* ── Render ── */
+function render(row){
+  var fs=[{k:'入党申请书日期',l:'提交入党申请书'},{k:'入党申请书页数',l:'入党申请书页数'},{k:'团支部推优日期',l:'团支部推优'},{k:'确定积极分子日期',l:'确定为入党积极分子'},{k:'确定发展对象日期',l:'确定为发展对象'},{k:'预备党员日期',l:'成为预备党员'},{k:'正式党员日期',l:'成为正式党员'}];
+  var h='<div class="result-card"><div class="rn">'+es(dv(row,'姓名'))+'</div><div class="ri">学号 '+es(dv(row,'学号'))+'</div><div class="secT">入党流程进度</div><div class="tl">';
+  for(var i=0;i<fs.length;i++){var f=fs[i],e=ep(row,f.k);h+='<div class="ti'+(e?' ep':'')+'"><div class="tll">'+f.l+'</div><div class="tv'+(e?' ev':'')+'">'+es(dv(row,f.k))+'</div></div>'}
+  h+='</div></div>';
+
+  var yu=v(row,'院党校培训'),xi=v(row,'校党校培训');
+  var yp=(yu==='是'||yu==='已通过'),xp=(xi==='是'||xi==='已通过');
+  h+='<div class="result-card"><div class="secT">入党积极分子培训情况</div><div class="tg">';
+  h+='<div class="tri"><div class="trl">院党校</div><div class="trv '+(yp?'pa':'pe')+'">'+(yp?'✓ 已通过':'暂无信息')+'</div></div>';
+  h+='<div class="tri"><div class="trl">校党校</div><div class="trv '+(xp?'pa':'pe')+'">'+(xp?'✓ 已通过':'暂无信息')+'</div></div></div></div>';
+
+  var aS=v(row,'确定积极分子日期'),aD=pd(aS);
+  h+='<div class="result-card"><div class="secT">思想汇报与培养考察安排</div>';
+  if(!aD){h+='<div class="msg nd"><p>尚未确定为入党积极分子，暂无相关安排</p></div>'}
+  else{
+    var td=new Date();td.setHours(0,0,0,0);
+    h+='<p style="font-size:.78rem;color:var(--neutral-500);margin-bottom:.7rem">根据确定积极分子日期（'+es(aS)+'）推算。每季度：思想汇报 → 培养联系人考察 → 每两季度党支部考察一次。</p>';
+    h+='<table class="rt"><thead><tr><th>次数</th><th>截止日期</th><th>思想汇报</th><th>培养联系人考察</th><th>党支部考察</th></tr></thead><tbody>';
+    for(var j=1;j<=8;j++){var dl=am(aD,j*3),dd=fm(dl),bg,hb=j%2===0;
+      if(td>dl)bg='<span class="bd bdg">已到期</span>';
+      else bg=((dl-td)/864e5<=30)?'<span class="bd bdo">即将到期</span>':'<span class="bd bdy">未到</span>';
+      h+='<tr'+(hb?' class="br"':'')+'><td>第 '+j+' 次</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--neutral-300)">—</span>')+'</td></tr>'}
+    h+='<tr class="erd"><td colspan="5">······</td></tr></tbody></table>';
+    h+='<div class="tb"><strong>注意事项：</strong><br>① 每次培养联系人考察需 <strong>两位培养联系人分别签名</strong>；<br>② 每两个季度（第 2、4、6、8 次后）进行一次党支部考察；<br>③ 思想汇报须在截止日期前完成并提交。</div>'}
+  h+='</div>';resultArea.innerHTML=h;
+}
 })();
 </script>
 </body>
