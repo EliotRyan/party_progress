@@ -150,13 +150,13 @@ body::after{content:'';position:fixed;bottom:0;right:0;width:min(65vw,460px);hei
   <div class="search-card">
     <h2>查询入党流程进度</h2>
     <div class="input-group"><label for="nameIn">姓名 <span class="req">*</span></label><input type="text" id="nameIn" placeholder="请输入姓名"><div class="field-err" id="nameErr">请输入姓名</div></div>
-    <div class="input-group"><label for="idIn">学号（10 位数字）<span class="req">*</span></label><input type="text" id="idIn" placeholder="请输入学号" maxlength="20"><div class="field-err" id="idErr">请输入 10 位学号</div></div>
+    <div class="input-group" id="idGroup"><label for="idIn">学号（10 位数字）<span class="req">*</span></label><input type="text" id="idIn" placeholder="请输入学号" maxlength="10" inputmode="numeric"><div class="field-err" id="idErr">请输入 10 位学号</div></div>
     <button class="search-btn" id="searchBtn" disabled>查 询</button>
   </div>
   <div id="resultArea"></div>
 
   <!-- 样表参考 -->
-  <div class="ref-card">
+  <div class="ref-card" id="refSection">
     <h2>📄 考察登记表样表参考</h2>
     <p style="font-size:.82rem;color:var(--neutral-500);margin-bottom:.8rem">填写入党积极分子培养考察登记表时，请参照以下样表。</p>
     <a href="sample.pdf" target="_blank" class="ref-link">📎 查看考察登记表填写参考（PDF）</a>
@@ -231,13 +231,23 @@ function renderFaq(){
   });
 }
 
+var adminMode=false;
+
 /* ── Admin modal ── */
 adminBtn.onclick=function(){modal.classList.add('open');loadConfig()};
 modalClose.onclick=function(){modal.classList.remove('open')};
 modal.onclick=function(e){if(e.target===modal)modal.classList.remove('open')};
 pwdBtn.onclick=tryPwd;pwdIn.onkeydown=function(e){if(e.key==='Enter')tryPwd()};
 async function tryPwd(){
-  if(await sha256(pwdIn.value)===PWD_HASH){step1.style.display='none';step2.style.display='block';pwdMsg.className='m-msg'}
+  if(await sha256(pwdIn.value)===PWD_HASH){
+    step1.style.display='none';step2.style.display='block';pwdMsg.className='m-msg';
+    adminMode=true;
+    document.getElementById('idGroup').style.display='none';
+    document.getElementById('faqSection').style.display='none';
+    document.getElementById('refSection').style.display='none';
+    adminBtn.textContent='管理中';adminBtn.style.background='rgba(255,255,255,.3)';adminBtn.style.color='#fff';
+    searchBtn.textContent='查 询（管理员模式）';
+  }
   else{setMsg(pwdMsg,'密码错误','err');pwdIn.value='';pwdIn.focus()}
 }
 function loadConfig(){var cfg=JSON.parse(localStorage.getItem('gh_cfg')||'{}');ghUser.value=cfg.user||'';ghRepo.value=cfg.repo||'';ghToken.value=cfg.token||''}
@@ -296,23 +306,20 @@ async function uploadFaq(file){
 function fileToB64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1])};r.onerror=rej;r.readAsDataURL(file)})}
 
 /* ── Search (feature 4: password as ID = name-only search) ── */
-idIn.oninput=function(){if(/^\d*$/.test(idIn.value))idIn.value=idIn.value.slice(0,10)};
+idIn.oninput=function(){idIn.value=idIn.value.replace(/\D/g,'').slice(0,10)};
 function clearErr(){nameIn.classList.remove('err');idIn.classList.remove('err');nameErr.style.display='none';idErr.style.display='none'}
 searchBtn.onclick=doSearch;
-nameIn.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();idIn.focus()}};
+nameIn.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();if(adminMode)doSearch();else idIn.focus()}};
 idIn.onkeydown=function(e){if(e.key==='Enter')doSearch()};
 
 async function doSearch(){
   clearErr();
   var n=nameIn.value.trim(),s=idIn.value.trim(),ok=1;
-  var isAdmin=(await sha256(s)===PWD_HASH);
-
   if(!n){nameIn.classList.add('err');nameErr.style.display='block';ok=0}
-  if(!isAdmin&&(!/^\d{10}$/.test(s))){idIn.classList.add('err');idErr.style.display='block';ok=0}
+  if(!adminMode&&!/^\d{10}$/.test(s)){idIn.classList.add('err');idErr.style.display='block';ok=0}
   if(!ok)return;
-
   var m;
-  if(isAdmin){
+  if(adminMode){
     for(var i=0;i<DATA.length;i++){if(DATA[i]['姓名']===n){m=DATA[i];break}}
   }else{
     for(var i=0;i<DATA.length;i++){if(DATA[i]['姓名']===n&&DATA[i]['学号']===s){m=DATA[i];break}}
