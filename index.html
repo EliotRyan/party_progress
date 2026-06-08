@@ -152,10 +152,10 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 /* ═══ CONFIG ═══ */
 var FIELDS=[
   {k:'姓名',l:'姓名',t:'text'},{k:'学号',l:'学号',t:'text'},{k:'所在支部',l:'所在支部',t:'text'},
-  {k:'入党申请书日期',l:'申请书日期',t:'text'},{k:'入党申请书页数',l:'申请书页数',t:'text'},
-  {k:'团支部推优日期',l:'推优日期',t:'text'},{k:'确定积极分子日期',l:'积极分子日期',t:'text'},
-  {k:'确定发展对象日期',l:'发展对象日期',t:'text'},{k:'预备党员日期',l:'预备党员日期',t:'text'},
-  {k:'正式党员日期',l:'正式党员日期',t:'text'},
+  {k:'入党申请书日期',l:'申请书日期',t:'date'},{k:'入党申请书页数',l:'申请书页数',t:'text'},
+  {k:'团支部推优日期',l:'推优日期',t:'date'},{k:'确定积极分子日期',l:'积极分子日期',t:'date'},
+  {k:'确定发展对象日期',l:'发展对象日期',t:'date'},{k:'预备党员日期',l:'预备党员日期',t:'date'},
+  {k:'正式党员日期',l:'正式党员日期',t:'date'},
   {k:'院党校培训',l:'院党校',t:'select',o:['','是']},{k:'校党校培训',l:'校党校',t:'select',o:['','是']}
 ];
 var BFIELDS=FIELDS.filter(function(f){return f.k!=='姓名'&&f.k!=='学号'});
@@ -229,17 +229,21 @@ $('aSearch').oninput=function(){rTable($('aSearch').value)};
 
 function gSel(){var s=[];$('tWrap').querySelectorAll('.rcb:checked').forEach(function(c){s.push(+c.dataset.i)});return s}
 function uBB(){var s=gSel(),bb=$('bBar');if(!s.length){bb.innerHTML='';return}
-  var h='<div class="bb"><span>已选 <b>'+s.length+'</b> 人</span><select id="bF">';BFIELDS.forEach(function(f){h+='<option value="'+f.k+'">'+f.l+'</option>'});h+='</select><input id="bV" placeholder="新值"><button class="bt bt-sm bt-g" id="bA">应用</button><button class="bt bt-sm bt-s" id="bC">取消</button></div>';
+  var h='<div class="bb"><span>已选 <b>'+s.length+'</b> 人</span><select id="bF">';BFIELDS.forEach(function(f){h+='<option value="'+f.k+'" data-t="'+f.t+'">'+f.l+'</option>'});h+='</select><input type="date" id="bV" class="fi" style="width:160px"><button class="bt bt-sm bt-g" id="bA">应用</button><button class="bt bt-sm bt-s" id="bC">取消</button></div>';
   bb.innerHTML=h;
-  $('bA').onclick=function(){var fk=$('bF').value,fv=$('bV').value;s.forEach(function(i){DATA[i][fk]=fv});rTable($('aSearch').value)};
+  var bfSel=$('bF'),bvIn=$('bV');
+  function syncType(){var opt=bfSel.options[bfSel.selectedIndex];var ft=opt.dataset.t;if(ft==='date'){bvIn.type='date';bvIn.placeholder=''}else if(ft==='select'){bvIn.type='text';bvIn.placeholder='填「是」'}else{bvIn.type='text';bvIn.placeholder='填写新值'}}
+  syncType();bfSel.onchange=syncType;
+  $('bA').onclick=function(){var fk=bfSel.value,fv=bvIn.value;s.forEach(function(i){DATA[i][fk]=fv});rTable($('aSearch').value)};
   $('bC').onclick=function(){$('tWrap').querySelectorAll('.rcb').forEach(function(c){c.checked=false});var ca=$('ckA');if(ca)ca.checked=false;uBB()};
 }
 
 /* ═══ EDIT MODAL ═══ */
 function oEdit(i){editIdx=i;var row=DATA[i];$('editTi').textContent='编辑：'+row['姓名'];
-  $('editFs').innerHTML=FIELDS.map(function(f){var v=row[f.k]||'';
-    if(f.t==='select')return'<div class="fg"><label>'+f.l+'</label><select class="fi fi-sel efi" data-k="'+f.k+'">'+f.o.map(function(o){return'<option'+(v===o?' selected':'')+'>'+o+'</option>'}).join('')+'</select></div>';
-    return'<div class="fg"><label>'+f.l+'</label><input type="text" class="fi efi" data-k="'+f.k+'" value="'+es(v)+'"></div>'}).join('');
+  $('editFs').innerHTML=FIELDS.map(function(f){var val=row[f.k]||'';
+    if(f.t==='select')return'<div class="fg"><label>'+f.l+'</label><select class="fi fi-sel efi" data-k="'+f.k+'">'+f.o.map(function(o){return'<option'+(val===o?' selected':'')+'>'+o+'</option>'}).join('')+'</select></div>';
+    if(f.t==='date')return'<div class="fg"><label>'+f.l+'</label><input type="date" class="fi efi" data-k="'+f.k+'" value="'+toISO(val)+'"></div>';
+    return'<div class="fg"><label>'+f.l+'</label><input type="text" class="fi efi" data-k="'+f.k+'" value="'+es(val)+'"></div>'}).join('');
   $('editOv').classList.add('op')}
 $('editX').onclick=function(){$('editOv').classList.remove('op')};
 $('editOv').onclick=function(e){if(e.target===$('editOv'))$('editOv').classList.remove('op')};
@@ -307,6 +311,7 @@ function doS(){cE();var n=$('nameIn').value.trim(),s=$('idIn').value.trim(),ok=1
 
 /* ═══ HELPERS ═══ */
 function v(r,k){var x=r[k];return(x==null||x===''||x==='—')?'':x}
+function toISO(s){if(!s)return'';s=s.replace(/年/g,'-').replace(/月/g,'-').replace(/日/g,'').replace(/\//g,'-').trim();var p=s.split('-').map(Number);if(p.length>=3&&p[0]>0&&p[1]>0&&p[2]>0)return p[0]+'-'+String(p[1]).padStart(2,'0')+'-'+String(p[2]).padStart(2,'0');return s}
 function dv(r,k){return v(r,k)||'暂无信息'}
 function ep(r,k){return!v(r,k)}
 function pd(s){if(!s)return null;s=s.replace(/年/g,'-').replace(/月/g,'-').replace(/日/g,'').replace(/\//g,'-').trim();var p=s.split('-').map(Number);if(p.length>=3&&p[0]>0&&p[1]>0&&p[2]>0)return new Date(p[0],p[1]-1,p[2]);var d=new Date(s);return isNaN(d)?null:d}
