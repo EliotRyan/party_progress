@@ -173,7 +173,7 @@ body::after{content:'';position:fixed;bottom:0;right:0;width:min(65vw,460px);hei
 
 <script>
 (function(){
-var ADMIN_PWD='ruc2025';
+var ADMIN_PWD='2025000000';
 var DATA=[],FAQ=[];
 
 var nameIn=document.getElementById('nameIn'),idIn=document.getElementById('idIn');
@@ -295,9 +295,7 @@ async function uploadFaq(file){
 function fileToB64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1])};r.onerror=rej;r.readAsDataURL(file)})}
 
 /* ── Search (feature 4: password as ID = name-only search) ── */
-idIn.oninput=function(){
-  if(idIn.value!==ADMIN_PWD)idIn.value=idIn.value.replace(/\D/g,'').slice(0,10);
-};
+idIn.oninput=function(){idIn.value=idIn.value.replace(/\D/g,'').slice(0,10)};
 function clearErr(){nameIn.classList.remove('err');idIn.classList.remove('err');nameErr.style.display='none';idErr.style.display='none'}
 searchBtn.onclick=doSearch;
 nameIn.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();idIn.focus()}};
