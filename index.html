@@ -16,7 +16,10 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .hd-t{position:relative}.hd h1{font-family:'Noto Serif SC',serif;font-size:clamp(1rem,3.5vw,1.5rem);color:#fff;font-weight:700;letter-spacing:.05em}.hd .sub{color:var(--gold-300);font-size:clamp(.58rem,1.6vw,.72rem);margin-top:.2rem;font-weight:300;letter-spacing:.06em}
 .hd-btn{position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);font-size:.7rem;padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .2s;z-index:2}.hd-btn:hover{background:rgba(255,255,255,.2);color:#fff}.hd-btn.on{background:rgba(255,255,255,.25);color:#fff;border-color:var(--gold-500)}
 .admin-name{font-size:.76rem;color:var(--gold-500);position:absolute;right:5rem;top:50%;transform:translateY(-50%);z-index:2;font-weight:500}
-.ct{max-width:720px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}.act{max-width:1200px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
+.ct{max-width:980px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}.act{max-width:1200px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
+#res{display:grid;gap:1rem}
+@media(min-width:700px){#res{grid-template-columns:1fr 1fr}#res .cd-full,#res .wb,#res .dw{grid-column:1/-1}}
+@media(max-width:699px){#res{grid-template-columns:1fr}}
 .cd{background:var(--card);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.06);padding:1.5rem;border:1px solid rgba(0,0,0,.04);margin-bottom:1rem}.cd.an{animation:su .35s ease-out}@keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .cd h2{font-family:'Noto Serif SC',serif;font-size:1rem;font-weight:600;margin-bottom:.8rem;color:var(--n9)}
 .sT{font-family:'Noto Serif SC',serif;font-size:.92rem;font-weight:600;color:var(--n9);margin-bottom:.7rem;padding-bottom:.35rem;border-bottom:2px solid var(--red-100)}
@@ -333,7 +336,7 @@ function ren(row){
 
   /* ── Timeline ── */
   var fs=[{k:'入党申请书日期',l:'提交入党申请书'},{k:'入党申请书页数',l:'申请书页数'},{k:'团支部推优日期',l:'团支部推优'},{k:'确定积极分子日期',l:'确定为积极分子'},{k:'确定发展对象日期',l:'确定为发展对象'},{k:'预备党员日期',l:'成为预备党员'},{k:'正式党员日期',l:'成为正式党员'}];
-  h+='<div class="cd an"><div class="rn">'+es(dv(row,'姓名'))+'</div><div class="ri2">学号 '+es(dv(row,'学号'))+(v(row,'所在支部')?' · '+es(v(row,'所在支部')):'')+'</div><div class="sT">入党流程</div><div class="tl">';
+  h+='<div class="cd an cd-full"><div class="rn">'+es(dv(row,'姓名'))+'</div><div class="ri2">学号 '+es(dv(row,'学号'))+(v(row,'所在支部')?' · '+es(v(row,'所在支部')):'')+'</div><div class="sT">入党流程</div><div class="tl">';
   for(var i=0;i<fs.length;i++){var f=fs[i],e=ep(row,f.k);h+='<div class="ti'+(e?' ep':'')+'"><div class="tll">'+f.l+'</div><div class="tvl'+(e?' ev':'')+'">'+es(dvf(row,f.k))+'</div></div>'}
   h+='</div></div>';
 
@@ -383,7 +386,7 @@ function ren(row){
   h+='</div>';
 
   /* ── Stage-specific tips ── */
-  h+='<div class="cd an"><div class="sT">当前阶段注意事项</div>';
+  h+='<div class="cd an cd-full"><div class="sT">当前阶段注意事项</div>';
   if(stg<=1){
     h+='<div class="tip-card"><div class="tip-title">📝 申请书阶段</div>入党申请书须<strong>本人亲笔书写</strong>，使用黑色墨水钢笔或签字笔。内容须符合时间逻辑，不能写尚未发生的事情。申请书落款日期将作为"申请入党时间"，务必准确。</div>';
   }
@@ -400,7 +403,7 @@ function ren(row){
 
   /* ── Thought reports schedule ── */
   var aS=v(row,'确定积极分子日期'),aD=pd(aS);
-  h+='<div class="cd an"><div class="sT">思想汇报与培养考察</div>';
+  h+='<div class="cd an cd-full"><div class="sT">思想汇报与培养考察</div>';
   if(!aD)h+='<div class="msg" style="color:var(--n5)"><p>尚未确定为积极分子</p></div>';
   else{var td=new Date();td.setHours(0,0,0,0);h+='<p style="font-size:.72rem;color:var(--n5);margin-bottom:.4rem">据积极分子日期（'+es(toCN(aS))+'）推算。</p><table class="rt"><thead><tr><th>次</th><th>截止</th><th>汇报</th><th>联系人考察</th><th>支部考察</th></tr></thead><tbody>';for(var j=1;j<=8;j++){var dl=am(aD,j*3),dd=fm(dl),bg,hb=j%2===0;if(td>dl)bg='<span class="bd bdg">已到期</span>';else bg=((dl-td)/864e5<=30)?'<span class="bd bdo">即将到期</span>':'<span class="bd bdy">未到</span>';h+='<tr'+(hb?' class="br"':'')+'><td>'+j+'</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--n3)">—</span>')+'</td></tr>'}h+='<tr class="erd"><td colspan="5">······</td></tr></tbody></table><div class="tb"><strong>注意：</strong>① 联系人考察需<strong>两位分别签名</strong>；② 第2、4、6、8次后党支部考察；③ 按时提交。</div>'}
   h+='</div>';$('res').innerHTML=h}
