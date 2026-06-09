@@ -20,6 +20,9 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .res-grid{display:grid;gap:1rem;align-items:start}
 @media(min-width:1100px){.res-grid{grid-template-columns:1fr 1fr 1fr}}
 @media(max-width:1099px){.res-grid{grid-template-columns:1fr}}
+.res-row{display:flex;gap:1rem;align-items:stretch}
+@media(min-width:860px){.res-row{flex-direction:row}.res-row>*{flex:1;min-width:0}}
+@media(max-width:859px){.res-row{flex-direction:column}}
 .cd{background:var(--card);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.06);padding:1.5rem;border:1px solid rgba(0,0,0,.04);margin-bottom:1rem}.cd.an{animation:su .35s ease-out}@keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .cd h2{font-family:'Noto Serif SC',serif;font-size:1rem;font-weight:600;margin-bottom:.8rem;color:var(--n9)}
 .sT{font-family:'Noto Serif SC',serif;font-size:.92rem;font-weight:600;color:var(--n9);margin-bottom:.7rem;padding-bottom:.35rem;border-bottom:2px solid var(--red-100)}
@@ -113,7 +116,6 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
     <button class="bt bt-p bt-bl" id="searchBtn" disabled>查 询</button>
   </div>
   <div id="res"></div>
-  <div class="cd" id="refSec"><h2>📄 考察登记表样表</h2><p style="font-size:.78rem;color:var(--n5);margin-bottom:.5rem">填写培养考察登记表时请参照样表。</p><a href="sample.pdf" target="_blank" class="rl">📎 查看填写参考</a></div>
   <div class="ft">数据仅在浏览器中处理，不会上传至任何服务器。</div>
 </div>
 
@@ -189,10 +191,10 @@ function getStage(r){
 function px(buf){var wb=XLSX.read(buf,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],j=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});DATA=j.map(function(r){var c={};for(var k in r)c[k.trim()]=String(r[k]).trim();return c});$('searchBtn').disabled=false}
 
 /* LOGIN */
-$('adminBtn').onclick=function(){if(CUR){CUR=null;$('adminBtn').textContent='管理';$('adminBtn').classList.remove('on');$('adminName').textContent='';$('aView').style.display='none';$('sView').style.display='block';$('refSec').style.display='';$('idGrp').style.display=''}else{$('loginOv').classList.add('op');$('lId').focus()}};
+$('adminBtn').onclick=function(){if(CUR){CUR=null;$('adminBtn').textContent='管理';$('adminBtn').classList.remove('on');$('adminName').textContent='';$('aView').style.display='none';$('sView').style.display='block';$('idGrp').style.display=''}else{$('loginOv').classList.add('op');$('lId').focus()}};
 $('loginX').onclick=function(){$('loginOv').classList.remove('op')};$('loginOv').onclick=function(e){if(e.target===$('loginOv'))$('loginOv').classList.remove('op')};
 $('lBtn').onclick=doLogin;$('lPwd').onkeydown=function(e){if(e.key==='Enter')doLogin()};
-async function doLogin(){var id=$('lId').value.trim(),pw=$('lPwd').value;if(!id||!pw){sm($('lMsg'),'请填写完整','er');return}var h=await sha(pw),adm=null;for(var i=0;i<ADMINS.length;i++){if(ADMINS[i].id===id&&ADMINS[i].pwdHash===h){adm=ADMINS[i];break}}if(!adm){sm($('lMsg'),'学号或密码错误','er');$('lPwd').value='';return}CUR=adm;$('loginOv').classList.remove('op');$('lId').value='';$('lPwd').value='';$('lMsg').className='mm';$('adminBtn').textContent='退出管理';$('adminBtn').classList.add('on');$('adminName').textContent=CUR.name+' · '+ROLES[CUR.role];$('sView').style.display='none';$('aView').style.display='block';$('refSec').style.display='none';$('idGrp').style.display='none';$('tabAdm').style.display=CUR.role==='super'?'':'none';setupImportTab();populateBranches();rTable();rStats();lCfg();if(CUR.role==='super')rAdmins()}
+async function doLogin(){var id=$('lId').value.trim(),pw=$('lPwd').value;if(!id||!pw){sm($('lMsg'),'请填写完整','er');return}var h=await sha(pw),adm=null;for(var i=0;i<ADMINS.length;i++){if(ADMINS[i].id===id&&ADMINS[i].pwdHash===h){adm=ADMINS[i];break}}if(!adm){sm($('lMsg'),'学号或密码错误','er');$('lPwd').value='';return}CUR=adm;$('loginOv').classList.remove('op');$('lId').value='';$('lPwd').value='';$('lMsg').className='mm';$('adminBtn').textContent='退出管理';$('adminBtn').classList.add('on');$('adminName').textContent=CUR.name+' · '+ROLES[CUR.role];$('sView').style.display='none';$('aView').style.display='block';$('idGrp').style.display='none';$('tabAdm').style.display=CUR.role==='super'?'':'none';setupImportTab();populateBranches();rTable();rStats();lCfg();if(CUR.role==='super')rAdmins()}
 
 /* TABS */
 document.querySelectorAll('.at').forEach(function(t){t.onclick=function(){document.querySelectorAll('.at').forEach(function(x){x.classList.remove('ac')});document.querySelectorAll('.tp').forEach(function(x){x.classList.remove('ac')});t.classList.add('ac');$(t.dataset.t).classList.add('ac');if(t.dataset.t==='tImp')setupImportTab()}});
@@ -399,9 +401,8 @@ function ren(row){
   h+='</div>';
 
   var yu=v(row,'院党校培训'),xi=v(row,'校党校培训'),yp=(yu==='是'),xp=(xi==='是');
-  /* ── Thought reports schedule + Training side by side ── */
-  h+='<div class="res-row">';
-  h+='<div class="cd an" style="flex:2"><div class="sT">思想汇报与培养考察</div>';
+  /* ── Thought reports schedule (full width) ── */
+  h+='<div class="cd an"><div class="sT">思想汇报与培养考察</div>';
   if(!aD)h+='<div class="msg" style="color:var(--n5)"><p>尚未确定为积极分子</p></div>';
   else{
     var td2=new Date();td2.setHours(0,0,0,0);
@@ -416,10 +417,14 @@ function ren(row){
       h+='<tr'+(hb?' class="br"':'')+'><td>'+j+'</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--n3)">—</span>')+'</td></tr>'}
     h+='</tbody></table><div class="tb"><strong>注意：</strong>① 联系人考察需<strong>两位分别签名</strong>；② 第2、4、6、8…次后党支部考察；③ 按时提交。</div>'}
   h+='</div>';
-  h+='<div class="cd an" style="flex:1"><div class="sT">积极分子培训</div><div class="tg"><div class="tri"><div class="trl">院党校</div><div class="trv '+(yp?'pa':'pe')+'">'+(yp?'✓ 已通过':'暂无信息')+'</div></div><div class="tri"><div class="trl">校党校</div><div class="trv '+(xp?'pa':'pe')+'">'+(xp?'✓ 已通过':'暂无信息')+'</div></div></div></div>';
+
+  /* ── Training + Sample form side by side ── */
+  h+='<div class="res-row">';
+  h+='<div class="cd an"><div class="sT">积极分子培训</div><div class="tg"><div class="tri"><div class="trl">院党校</div><div class="trv '+(yp?'pa':'pe')+'">'+(yp?'✓ 已通过':'暂无信息')+'</div></div><div class="tri"><div class="trl">校党校</div><div class="trv '+(xp?'pa':'pe')+'">'+(xp?'✓ 已通过':'暂无信息')+'</div></div></div></div>';
+  h+='<div class="cd an"><div class="sT">📄 考察登记表样表</div><p style="font-size:.78rem;color:var(--n5);margin-bottom:.5rem">填写培养考察登记表时请参照样表。</p><a href="sample.pdf" target="_blank" class="rl">📎 查看填写参考</a></div>';
   h+='</div>';
 
-  /* ── Contact email card ── */
+  /* ── Contact email card (at bottom) ── */
   h+='<div class="contact-card">📧 <strong>联系管理员</strong><br>如有材料或流程问题，请联系所在支部党务联系人：<strong>'+es(cemail)+'</strong></div>';
   $('res').innerHTML=h}
 })();
