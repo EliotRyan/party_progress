@@ -17,9 +17,8 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .hd-btn{position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);font-size:.7rem;padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .2s;z-index:2}.hd-btn:hover{background:rgba(255,255,255,.2);color:#fff}.hd-btn.on{background:rgba(255,255,255,.25);color:#fff;border-color:var(--gold-500)}
 .admin-name{font-size:.76rem;color:var(--gold-500);position:absolute;right:5rem;top:50%;transform:translateY(-50%);z-index:2;font-weight:500}
 .ct{max-width:980px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}.act{max-width:1200px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
-#res{display:grid;gap:1rem}
-@media(min-width:700px){#res{grid-template-columns:1fr 1fr}#res .cd-full,#res .wb,#res .dw{grid-column:1/-1}}
-@media(max-width:699px){#res{grid-template-columns:1fr}}
+#res{display:grid;gap:1rem}#res .cd,#res .wb,#res .dw{margin-bottom:0}
+@media(min-width:700px){#res{grid-template-columns:1fr 1fr;gap:1.2rem}#res .cd-full,#res .wb,#res .dw{grid-column:1/-1}}
 .cd{background:var(--card);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.06);padding:1.5rem;border:1px solid rgba(0,0,0,.04);margin-bottom:1rem}.cd.an{animation:su .35s ease-out}@keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .cd h2{font-family:'Noto Serif SC',serif;font-size:1rem;font-weight:600;margin-bottom:.8rem;color:var(--n9)}
 .sT{font-family:'Noto Serif SC',serif;font-size:.92rem;font-weight:600;color:var(--n9);margin-bottom:.7rem;padding-bottom:.35rem;border-bottom:2px solid var(--red-100)}
