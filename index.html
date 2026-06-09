@@ -63,7 +63,6 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 /* Writing banner */
 .wb{background:linear-gradient(135deg,var(--red-50),#fff5f0);border:1px solid var(--red-100);border-radius:var(--rs);padding:.55rem .8rem;font-size:.73rem;color:var(--n7);margin-bottom:.8rem;line-height:1.5}
 .wb strong{color:var(--red-700)}
-.fqi{border-bottom:1px solid var(--n1);padding:.5rem 0}.fqi:last-child{border-bottom:none}.fqq{font-size:.82rem;font-weight:500;color:var(--red-800);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:.4rem}.fqq::after{content:'▸';font-size:.6rem;color:var(--n4);transition:transform .2s}.fqi.op .fqq::after{transform:rotate(90deg)}.fqa{font-size:.78rem;color:var(--n6);line-height:1.5;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}.fqi.op .fqa{max-height:300px;padding-top:.3rem}
 /* Admin */
 .stat-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
 .stat-item{background:var(--card);border:1px solid var(--n2);border-radius:var(--rs);padding:.5rem .8rem;text-align:center;flex:1;min-width:80px}
@@ -88,6 +87,8 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .md{background:#fff;border-radius:var(--r);padding:1.4rem;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;max-height:85vh;overflow-y:auto}.md h3{font-size:.92rem;font-weight:600;color:var(--red-800);margin-bottom:.7rem}.md-x{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1rem;cursor:pointer;color:var(--n4)}.md-x:hover{color:var(--n9)}
 .ft{text-align:center;padding:1.2rem 1rem;font-size:.68rem;color:var(--n4)}
 .radio-group{display:flex;gap:1rem;margin:.5rem 0}.radio-group label{font-size:.82rem;color:var(--n7);cursor:pointer;display:flex;align-items:center;gap:.3rem}
+.contact-card{background:var(--blue-100);border:1px solid var(--blue-600);border-radius:var(--rs);padding:.7rem .9rem;margin-bottom:1rem;font-size:.8rem;color:var(--blue-700);line-height:1.5}
+.contact-card strong{color:var(--blue-700)}
 @media(max-width:640px){.ct,.act{padding:.8rem}.cd{padding:1rem}.hd{gap:.5rem;padding:1.1rem .7rem}.hd-logo{width:30px;height:30px}.hd-btn{font-size:.6rem;padding:.2rem .35rem;right:.4rem}.admin-name{display:none}.dt{font-size:.68rem}.stat-bar{gap:.3rem}.stat-item{padding:.4rem .5rem;min-width:60px}.stat-item .sv{font-size:1rem}.res-row{flex-direction:column}.res-row>.cd{min-width:0}}
 </style>
 </head>
@@ -109,7 +110,6 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
   </div>
   <div id="res"></div>
   <div class="cd" id="refSec"><h2>📄 考察登记表样表</h2><p style="font-size:.78rem;color:var(--n5);margin-bottom:.5rem">填写培养考察登记表时请参照样表。</p><a href="sample.pdf" target="_blank" class="rl">📎 查看填写参考</a></div>
-  <div class="cd" id="faqSec" style="display:none"><h2>❓ 常见问题</h2><div id="faqL"></div></div>
   <div class="ft">数据仅在浏览器中处理，不会上传至任何服务器。</div>
 </div>
 
@@ -119,7 +119,6 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
   <div class="atb" id="aTabs">
     <button class="at ac" data-t="tRec">档案管理</button>
     <button class="at" data-t="tImp">数据导入</button>
-    <button class="at" data-t="tFaq">常见问题</button>
     <button class="at" data-t="tCfg">GitHub 配置</button>
     <button class="at" data-t="tPwd">修改密码</button>
     <button class="at" data-t="tAdm" id="tabAdm" style="display:none">管理员管理</button>
@@ -140,7 +139,6 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
     <div class="radio-group"><label><input type="radio" name="impMode" value="append" checked> 追加导入（保留已有数据）</label><label id="impOwLabel"><input type="radio" name="impMode" value="overwrite"> 完全覆盖</label></div>
     <div class="uz" id="uzD"><input type="file" id="fD" accept=".xlsx,.xls"><p>📊 拖拽或点击上传</p></div><div class="mm" id="impM"></div>
     <div class="mn">列名：姓名、学号、所在支部、入党申请书日期、入党申请书页数、团支部推优日期、确定积极分子日期、确定发展对象日期、预备党员日期、正式党员日期、院党校培训、校党校培训</div></div></div>
-  <div class="tp" id="tFaq"><div class="cd"><h2>管理常见问题</h2><div class="uz" id="uzF"><input type="file" id="fF" accept=".json"><p>📋 上传 faq.json</p></div><div class="mm" id="faqAM"></div></div></div>
   <div class="tp" id="tCfg"><div class="cd"><h2>GitHub 推送配置</h2><div class="fg"><label>用户名</label><input class="fi" id="ghU"></div><div class="fg"><label>仓库名</label><input class="fi" id="ghR"></div><div class="fg"><label>Token</label><input type="password" class="fi" id="ghT"></div><button class="bt bt-s" id="saveCfg">保存</button> <button class="bt bt-s" id="shareBtn">📤 生成分享码</button><div class="mm" id="cfgM"></div><div id="shareBox" style="display:none;margin-top:.5rem"><textarea class="fi" id="shareCode" rows="2" style="font-size:.7rem;font-family:monospace" readonly></textarea></div><hr style="border:none;border-top:1px solid var(--n2);margin:.7rem 0"><h2>导入分享码</h2><textarea class="fi" id="importCode" rows="2" style="font-size:.7rem;font-family:monospace" placeholder="粘贴分享码"></textarea><button class="bt bt-s" id="importBtn" style="margin-top:.3rem">📥 导入</button><div class="mm" id="importM"></div></div></div>
   <div class="tp" id="tPwd"><div class="cd"><h2>修改密码</h2><div class="fg"><label>当前密码</label><input type="password" class="fi" id="oldPwd"></div><div class="fg"><label>新密码</label><input type="password" class="fi" id="newPwd"></div><div class="fg"><label>确认</label><input type="password" class="fi" id="cfmPwd"></div><button class="bt bt-p" id="chPwd">修改</button><div class="mm" id="pwdChM"></div></div></div>
   <div class="tp" id="tAdm"><div class="cd"><h2>管理员管理</h2><div id="admList"></div><hr style="border:none;border-top:1px solid var(--n2);margin:.7rem 0"><h2>添加管理员</h2><div class="fg"><label>学号</label><input class="fi" id="naId"></div><div class="fg"><label>姓名</label><input class="fi" id="naName"></div><div class="fg"><label>角色</label><select class="fi fi-sel" id="naRole"><option value="secretary">党支部书记</option><option value="contact">党务联系人</option></select></div><div class="fg" id="naScopeGrp"><label>管辖支部</label><input class="fi" id="naScope" placeholder="如 2025级本科2班"></div><button class="bt bt-p" id="naAdd">添加</button><div class="mm" id="naM"></div></div></div>
@@ -169,7 +167,7 @@ var ROLES={super:'超级管理员',secretary:'党支部书记',contact:'党务�
 var STAGES=['未提交申请','已提交申请','已推优','积极分子','发展对象','预备党员','正式党员'];
 var DATE_KEYS={'入党申请书日期':1,'团支部推优日期':1,'确定积极分子日期':1,'确定发展对象日期':1,'预备党员日期':1,'正式党员日期':1};
 
-var DATA=[],FAQ=[],ADMINS=[],CUR=null,editIdx=-1,sortCol='',sortAsc=true;
+var DATA=[],ADMINS=[],CUR=null,editIdx=-1,sortCol='',sortAsc=true;
 async function sha(s){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
 var $=document.getElementById.bind(document);
 function sm(el,t,c){el.className='mm '+c;el.textContent=t}
@@ -182,17 +180,15 @@ function getStage(r){
 
 /* AUTO LOAD */
 (async function(){sbn('正在加载…','ld');try{var r=await fetch('data.xlsx',{cache:'no-cache'});if(!r.ok)throw 0;px(await r.arrayBuffer());sbn('✓ 已加载 '+DATA.length+' 条','ok');setTimeout(function(){$('banner').classList.remove('sh')},2500)}catch(e){sbn('加载失败','fl')}})();
-(async function(){try{var r=await fetch('faq.json',{cache:'no-cache'});if(r.ok){FAQ=await r.json();rFaq()}}catch(e){}})();
 (async function(){try{var r=await fetch('admins.json',{cache:'no-cache'});if(r.ok)ADMINS=await r.json()}catch(e){ADMINS=[]}})();
 
 function px(buf){var wb=XLSX.read(buf,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],j=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});DATA=j.map(function(r){var c={};for(var k in r)c[k.trim()]=String(r[k]).trim();return c});$('searchBtn').disabled=false}
-function rFaq(){var s=$('faqSec'),l=$('faqL');if(!FAQ.length){s.style.display='none';return}s.style.display='block';l.innerHTML=FAQ.map(function(i){return'<div class="fqi"><div class="fqq">'+es(i.q)+'</div><div class="fqa">'+es(i.a)+'</div></div>'}).join('');l.querySelectorAll('.fqq').forEach(function(q){q.onclick=function(){q.parentElement.classList.toggle('op')}})}
 
 /* LOGIN */
-$('adminBtn').onclick=function(){if(CUR){CUR=null;$('adminBtn').textContent='管理';$('adminBtn').classList.remove('on');$('adminName').textContent='';$('aView').style.display='none';$('sView').style.display='block';$('refSec').style.display='';$('faqSec').style.display=FAQ.length?'block':'none';$('idGrp').style.display=''}else{$('loginOv').classList.add('op');$('lId').focus()}};
+$('adminBtn').onclick=function(){if(CUR){CUR=null;$('adminBtn').textContent='管理';$('adminBtn').classList.remove('on');$('adminName').textContent='';$('aView').style.display='none';$('sView').style.display='block';$('refSec').style.display='';$('idGrp').style.display=''}else{$('loginOv').classList.add('op');$('lId').focus()}};
 $('loginX').onclick=function(){$('loginOv').classList.remove('op')};$('loginOv').onclick=function(e){if(e.target===$('loginOv'))$('loginOv').classList.remove('op')};
 $('lBtn').onclick=doLogin;$('lPwd').onkeydown=function(e){if(e.key==='Enter')doLogin()};
-async function doLogin(){var id=$('lId').value.trim(),pw=$('lPwd').value;if(!id||!pw){sm($('lMsg'),'请填写完整','er');return}var h=await sha(pw),adm=null;for(var i=0;i<ADMINS.length;i++){if(ADMINS[i].id===id&&ADMINS[i].pwdHash===h){adm=ADMINS[i];break}}if(!adm){sm($('lMsg'),'学号或密码错误','er');$('lPwd').value='';return}CUR=adm;$('loginOv').classList.remove('op');$('lId').value='';$('lPwd').value='';$('lMsg').className='mm';$('adminBtn').textContent='退出管理';$('adminBtn').classList.add('on');$('adminName').textContent=CUR.name+' · '+ROLES[CUR.role];$('sView').style.display='none';$('aView').style.display='block';$('refSec').style.display='none';$('faqSec').style.display='none';$('idGrp').style.display='none';$('tabAdm').style.display=CUR.role==='super'?'':'none';setupImportTab();populateBranches();rTable();rStats();lCfg();if(CUR.role==='super')rAdmins()}
+async function doLogin(){var id=$('lId').value.trim(),pw=$('lPwd').value;if(!id||!pw){sm($('lMsg'),'请填写完整','er');return}var h=await sha(pw),adm=null;for(var i=0;i<ADMINS.length;i++){if(ADMINS[i].id===id&&ADMINS[i].pwdHash===h){adm=ADMINS[i];break}}if(!adm){sm($('lMsg'),'学号或密码错误','er');$('lPwd').value='';return}CUR=adm;$('loginOv').classList.remove('op');$('lId').value='';$('lPwd').value='';$('lMsg').className='mm';$('adminBtn').textContent='退出管理';$('adminBtn').classList.add('on');$('adminName').textContent=CUR.name+' · '+ROLES[CUR.role];$('sView').style.display='none';$('aView').style.display='block';$('refSec').style.display='none';$('idGrp').style.display='none';$('tabAdm').style.display=CUR.role==='super'?'':'none';setupImportTab();populateBranches();rTable();rStats();lCfg();if(CUR.role==='super')rAdmins()}
 
 /* TABS */
 document.querySelectorAll('.at').forEach(function(t){t.onclick=function(){document.querySelectorAll('.at').forEach(function(x){x.classList.remove('ac')});document.querySelectorAll('.tp').forEach(function(x){x.classList.remove('ac')});t.classList.add('ac');$(t.dataset.t).classList.add('ac');if(t.dataset.t==='tImp')setupImportTab()}});
@@ -276,10 +272,6 @@ $('fD').onchange=function(e){if(e.target.files.length)doImp(e.target.files[0])};
 $('uzD').ondragover=function(e){e.preventDefault()};$('uzD').ondrop=function(e){e.preventDefault();if(e.dataTransfer.files.length)doImp(e.dataTransfer.files[0])};
 function doImp(f){var mode=document.querySelector('input[name="impMode"]:checked').value;if(mode==='overwrite'&&CUR&&CUR.role!=='super'){sm($('impM'),'仅超级管理员可使用完全覆盖','er');return}var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(e.target.result,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],j=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});var nd=j.map(function(r){var c={};for(var k in r)c[k.trim()]=String(r[k]).trim();return c});if(mode==='overwrite'){DATA=nd}else{DATA=DATA.concat(nd)}sm($('impM'),'✓ '+(mode==='overwrite'?'已覆盖':'已追加')+' '+nd.length+' 条，共 '+DATA.length+' 条','ok');$('searchBtn').disabled=false;populateBranches();rTable();rStats()}catch(err){sm($('impM'),'导入失败','er')}};r.readAsArrayBuffer(f)}
 
-/* FAQ */
-$('fF').onchange=function(e){if(e.target.files.length)doFU(e.target.files[0])};
-async function doFU(f){try{FAQ=JSON.parse(await f.text());rFaq();var b=btoa(unescape(encodeURIComponent(JSON.stringify(FAQ,null,2))));await pGH('faq.json',b);sm($('faqAM'),'✓ 更新 '+FAQ.length+' 条','ok')}catch(e){sm($('faqAM'),'失败：'+e.message,'er')}}
-
 /* GITHUB */
 function lCfg(){var c=JSON.parse(localStorage.getItem('gh_cfg')||'{}');$('ghU').value=c.user||'';$('ghR').value=c.repo||'';$('ghT').value=c.token||''}
 $('saveCfg').onclick=function(){var u=$('ghU').value.trim(),r=$('ghR').value.trim(),t=$('ghT').value.trim();if(!u||!r||!t){sm($('cfgM'),'请填完整','er');return}localStorage.setItem('gh_cfg',JSON.stringify({user:u,repo:r,token:t}));sm($('cfgM'),'✓ 已保存','ok')};
@@ -320,9 +312,16 @@ function es(s){var e=document.createElement('span');e.textContent=s;return e.inn
 function ren(row){
   var stg=getStage(row);
 
+  /* ── Contact email ── */
+  var br=v(row,'所在支部'),cemail='';
+  for(var ai=0;ai<ADMINS.length;ai++){if(ADMINS[ai].role==='contact'&&ADMINS[ai].scope===br){cemail=ADMINS[ai].id+'@ruc.edu.cn';break}}
+  if(!cemail){for(var ai=0;ai<ADMINS.length;ai++){if(ADMINS[ai].role==='secretary'){cemail=ADMINS[ai].id+'@ruc.edu.cn';break}}}
+  if(!cemail)cemail='请联系党支部书记';
+
   /* ── Thought report count ── */
   var aS=v(row,'确定积极分子日期'),aD=pd(aS),repCnt=0;
-  if(aD){var td=new Date();td.setHours(0,0,0,0);for(var jj=1;jj<=8;jj++){var dl=am(aD,jj*3);if(td>dl)repCnt++}repCnt=Math.min(repCnt,8)}
+  var td=new Date();td.setHours(0,0,0,0);var endDate=pd(v(row,'正式党员日期'))||td;
+  if(aD){for(var jj=1;;jj++){var dl=am(aD,jj*3);if(dl>endDate)break;if(td>dl)repCnt++}repCnt=Math.max(0,repCnt)}
 
   /* ── Writing guidelines banner ── */
   var h='<div class="wb"><strong>书写规范：</strong>所有材料须使用钢笔或签字笔、黑色墨水。不确定的地方可以使用铅笔。日期一律用公历阿拉伯数字。表内栏目没有内容时应注明"无"。</div>';
@@ -355,10 +354,10 @@ function ren(row){
   var cl=[];
   if(stg>=0){
     cl.push({done:stg>=1,label:'入党申请书',sub:'人大抬头横线信纸，不少于5页'});
-    cl.push({done:stg>=1,label:'党组织派人谈话记录',sub:'问答式，落款日期应在申请书之后'});
+    cl.push({done:stg>=1,label:'党组织派人谈话记录',sub:'问答式，落款日期应在申请书之后一个月内'});
   }
   if(stg>=1){
-    cl.push({done:stg>=2,label:'团支部推荐意见',sub:'一张纸 + 考察登记表 P4，日期须一致'});
+    cl.push({done:stg>=2,label:'团支部推荐意见',sub:'一张纸 + 考察登记表 P4，日期须一致，须团委盖章'});
     cl.push({done:stg>=3,label:'积极分子确定决议',sub:'考察登记表 P4 党支部意见，日期与首页一致'});
   }
   if(stg>=3){
@@ -367,7 +366,7 @@ function ren(row){
     cl.push({done:false,pend:true,label:'培养考察情况',sub:'联系人考察 '+repCnt+' 次 · 党支部考察 '+ecnt+' 次'});
     var yy=yp?'院党校 ✓':'院党校 ✗';var xx=xp?'校党校 ✓':'校党校 ✗';
   }else{var yy=yp?'院党校 ✓':'院党校 ✗';var xx=xp?'校党校 ✓':'校党校 ✗'}
-  if(stg>=1){cl.push({done:yp,label:'院党校结业证书',sub:yy});cl.push({done:xp,label:'校党校结业证书',sub:xx})}
+  if(stg>=1){cl.push({done:yp,label:'院党校结业证书',sub:yy+'（须加盖学校党委和校党校两个章）'});cl.push({done:xp,label:'校党校结业证书',sub:xx})}
   if(stg>=4){
     cl.push({done:stg>=4,label:'发展对象座谈会记录',sub:'一张纸 + 考察登记表 P17，日期须一致'});
     cl.push({done:stg>=4,label:'培养联系人意见',sub:'落款时间须在群众意见和支部意见之间'});
@@ -394,25 +393,38 @@ function ren(row){
   /* Stage-specific tips */
   h+='<div class="cd an"><div class="sT">当前阶段注意事项</div>';
   if(stg<=1){
-    h+='<div class="tip-card"><div class="tip-title">📝 申请书阶段</div>入党申请书须<strong>本人亲笔书写</strong>，使用黑色墨水钢笔或签字笔。内容须符合时间逻辑，不能写尚未发生的事情。申请书落款日期将作为"申请入党时间"，务必准确。</div>';
+    h+='<div class="tip-card"><div class="tip-title">📝 申请书阶段</div>① 入党申请书须<strong>本人亲笔书写</strong>，使用黑色墨水钢笔或签字笔，人大抬头横线信纸。<br>② 内容须<strong>符合时间逻辑</strong>，不能写尚未发生的事情。<br>③ 申请书落款日期将作为"申请入党时间"，务必准确。<br>④ 党组织派人谈话记录须在申请书落款<strong>后一个月内</strong>完成，内容须丰富。</div>';
   }
   if(stg>=2&&stg<=3){
-    h+='<div class="tip-card"><div class="tip-title">📋 积极分子阶段</div>① 思想汇报须使用<strong>人大抬头横线信纸</strong>，每份不少于 3 页，每季度提交一次，总份数不少于 5 份。<br>② 考察登记表主要经历须写到<strong>当前就读学段</strong>，申请入党时间须与申请书落款一致。<br>③ 培养考察意见落款日期须在对应<strong>思想汇报日期之后</strong>。<br>④ 表内栏目没有内容时应注明"无"，不能留空。</div>';
+    h+='<div class="tip-card"><div class="tip-title">📋 积极分子阶段</div>① 团支部推荐意见须<strong>加盖团委章</strong>，P4 日期与首页一致。<br>② 思想汇报须使用<strong>人大抬头横线信纸</strong>，每季度一次，不少于5份，每份不少于3页。<br>③ 考察表主要经历须写到<strong>当前就读学段</strong>，申请入党时间须与申请书落款一致。<br>④ 培养考察意见落款须在对应<strong>思想汇报之后</strong>，联系人须<strong>两位分别签名</strong>。<br>⑤ 院党校结业证书须<strong>加盖学校党委和校党校两个章</strong>。<br>⑥ 表内空白栏填"无"，不能留空。</div>';
   }
   if(stg>=4){
-    h+='<div class="tip-card"><div class="tip-title">📌 发展对象阶段</div>① 座谈会记录与考察登记表 P17 日期须一致。<br>② 院党校结业证书须加盖<strong>学校党委和校党校两个章</strong>。<br>③ "确定为发展对象"支委会意见一张纸、考察登记表首页、P18 党支部意见<strong>三个日期须一致</strong>。<br>④ 校党校培训情况须手写至考察登记表 P19。<br>⑤ 支委会审查意见（P20）时间须<strong>晚于 P19 所有时间</strong>。</div>';
+    h+='<div class="tip-card"><div class="tip-title">📌 发展对象阶段</div>① 座谈会记录一张纸与考察登记表 P17 日期须<strong>一致</strong>。<br>② 培养联系人意见落款须在<strong>群众意见和支部意见之间</strong>。<br>③ 支委会意见一张纸 + P18 + 首页日期<strong>三者须一致</strong>。<br>④ 校党校培训情况须<strong>手写</strong>至考察登记表 P19。<br>⑤ 支部委员会审查意见（P20）时间须<strong>晚于 P19 所有时间</strong>。<br>⑥ 综合考察报告落款时间须与 P20<strong>一致</strong>。</div>';
   }
   if(stg>=5){
-    h+='<div class="tip-card"><div class="tip-title">🎯 预备党员阶段</div>① 预备期内继续撰写思想汇报。<br>② 预备期满前提交转正申请书。<br>③ 转正前需要完成群众座谈会、综合考察报告、公示等程序。</div>';
+    h+='<div class="tip-card"><div class="tip-title">🎯 预备党员阶段</div>① 预备期内<strong>每季度继续撰写思想汇报</strong>。<br>② 预备期满前提交转正申请书。<br>③ 转正前须完成群众座谈会、综合考察报告、公示等全部程序。<br>④ 转正支部大会记录须<strong>支部书记签字</strong>。</div>';
   }
   h+='</div></div>';
 
   /* ── Thought reports schedule ── */
   h+='<div class="cd an"><div class="sT">思想汇报与培养考察</div>';
   if(!aD)h+='<div class="msg" style="color:var(--n5)"><p>尚未确定为积极分子</p></div>';
-  else{var td2=new Date();td2.setHours(0,0,0,0);h+='<p style="font-size:.72rem;color:var(--n5);margin-bottom:.4rem">据积极分子日期（'+es(toCN(aS))+'）推算。</p><table class="rt"><thead><tr><th>次</th><th>截止</th><th>汇报</th><th>联系人考察</th><th>支部考察</th></tr></thead><tbody>';
-  for(var j=1;j<=8;j++){var dl=am(aD,j*3),dd=fm(dl),bg,hb=j%2===0;if(td2>dl)bg='<span class="bd bdg">已到期</span>';else bg=((dl-td2)/864e5<=30)?'<span class="bd bdo">即将到期</span>':'<span class="bd bdy">未到</span>';h+='<tr'+(hb?' class="br"':'')+'><td>'+j+'</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--n3)">—</span>')+'</td></tr>'}h+='<tr class="erd"><td colspan="5">······</td></tr></tbody></table><div class="tb"><strong>注意：</strong>① 联系人考察需<strong>两位分别签名</strong>；② 第2、4、6、8次后党支部考察；③ 按时提交。</div>'}
-  h+='</div>';$('res').innerHTML=h}
+  else{
+    var td2=new Date();td2.setHours(0,0,0,0);
+    var endPat=pd(v(row,'正式党员日期'))||td2;
+    h+='<p style="font-size:.72rem;color:var(--n5);margin-bottom:.4rem">据积极分子日期（'+es(toCN(aS))+'）推算，每3个月一行。</p><table class="rt"><thead><tr><th>次</th><th>截止</th><th>汇报</th><th>联系人考察</th><th>支部考察</th></tr></thead><tbody>';
+    for(var j=1;;j++){
+      var dl=am(aD,j*3),dd=fm(dl),bg,hb=j%2===0;
+      if(dl>endPat)break;
+      if(td2>dl)bg='<span class="bd bdg">已到期</span>';
+      else bg=((dl-td2)/864e5<=30)?'<span class="bd bdo">即将到期</span>':'<span class="bd bdy">未到</span>';
+      h+='<tr'+(hb?' class="br"':'')+'><td>'+j+'</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--n3)">—</span>')+'</td></tr>'}
+    h+='</tbody></table><div class="tb"><strong>注意：</strong>① 联系人考察需<strong>两位分别签名</strong>；② 第2、4、6、8…次后党支部考察；③ 按时提交。</div>'}
+  h+='</div>';
+
+  /* ── Contact email card ── */
+  h+='<div class="contact-card">📧 <strong>联系管理员</strong><br>如有材料或流程问题，请联系所在支部党务联系人：<strong>'+es(cemail)+'</strong></div>';
+  $('res').innerHTML=h}
 })();
 </script>
 </body>
