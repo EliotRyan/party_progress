@@ -17,7 +17,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .hd-btn{position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);font-size:.7rem;padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .2s;z-index:2}.hd-btn:hover{background:rgba(255,255,255,.2);color:#fff}.hd-btn.on{background:rgba(255,255,255,.25);color:#fff;border-color:var(--gold-500)}
 .admin-name{font-size:.76rem;color:var(--gold-500);position:absolute;right:5rem;top:50%;transform:translateY(-50%);z-index:2;font-weight:500}
 .ct{max-width:980px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}.act{max-width:1200px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
-#res{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1rem}#res .cd,#res .wb,#res .dw{margin-bottom:0}#res .cd-full,#res .wb,#res .dw{grid-column:1/-1}
+.res-row{display:flex;gap:1rem;flex-wrap:wrap;align-items:stretch}.res-row>.cd{flex:1;min-width:300px}
 .cd{background:var(--card);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.06);padding:1.5rem;border:1px solid rgba(0,0,0,.04);margin-bottom:1rem}.cd.an{animation:su .35s ease-out}@keyframes su{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .cd h2{font-family:'Noto Serif SC',serif;font-size:1rem;font-weight:600;margin-bottom:.8rem;color:var(--n9)}
 .sT{font-family:'Noto Serif SC',serif;font-size:.92rem;font-weight:600;color:var(--n9);margin-bottom:.7rem;padding-bottom:.35rem;border-bottom:2px solid var(--red-100)}
@@ -88,7 +88,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .md{background:#fff;border-radius:var(--r);padding:1.4rem;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;max-height:85vh;overflow-y:auto}.md h3{font-size:.92rem;font-weight:600;color:var(--red-800);margin-bottom:.7rem}.md-x{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1rem;cursor:pointer;color:var(--n4)}.md-x:hover{color:var(--n9)}
 .ft{text-align:center;padding:1.2rem 1rem;font-size:.68rem;color:var(--n4)}
 .radio-group{display:flex;gap:1rem;margin:.5rem 0}.radio-group label{font-size:.82rem;color:var(--n7);cursor:pointer;display:flex;align-items:center;gap:.3rem}
-@media(max-width:640px){.ct,.act{padding:.8rem}.cd{padding:1rem}.hd{gap:.5rem;padding:1.1rem .7rem}.hd-logo{width:30px;height:30px}.hd-btn{font-size:.6rem;padding:.2rem .35rem;right:.4rem}.admin-name{display:none}.dt{font-size:.68rem}.stat-bar{gap:.3rem}.stat-item{padding:.4rem .5rem;min-width:60px}.stat-item .sv{font-size:1rem}}
+@media(max-width:640px){.ct,.act{padding:.8rem}.cd{padding:1rem}.hd{gap:.5rem;padding:1.1rem .7rem}.hd-logo{width:30px;height:30px}.hd-btn{font-size:.6rem;padding:.2rem .35rem;right:.4rem}.admin-name{display:none}.dt{font-size:.68rem}.stat-bar{gap:.3rem}.stat-item{padding:.4rem .5rem;min-width:60px}.stat-item .sv{font-size:1rem}.res-row{flex-direction:column}.res-row>.cd{min-width:0}}
 </style>
 </head>
 <body>
@@ -319,12 +319,17 @@ function es(s){var e=document.createElement('span');e.textContent=s;return e.inn
 /* RENDER */
 function ren(row){
   var stg=getStage(row);
+
+  /* ── Thought report count ── */
+  var aS=v(row,'确定积极分子日期'),aD=pd(aS),repCnt=0;
+  if(aD){var td=new Date();td.setHours(0,0,0,0);for(var jj=1;jj<=8;jj++){var dl=am(aD,jj*3);if(td>dl)repCnt++}repCnt=Math.min(repCnt,8)}
+
   /* ── Writing guidelines banner ── */
   var h='<div class="wb"><strong>书写规范：</strong>所有材料须使用钢笔或签字笔、黑色墨水。不确定的地方可以使用铅笔。日期一律用公历阿拉伯数字。表内栏目没有内容时应注明"无"。</div>';
 
   /* ── Date validation warnings ── */
   var warns=[];
-  var d1=pd(v(row,'入党申请书日期')),d2=pd(v(row,'团支部推优日期')),d3=pd(v(row,'确定积极分子日期')),d4=pd(v(row,'确定发展对象日期')),d5=pd(v(row,'预备党员日期')),d6=pd(v(row,'正式党员日期'));
+  var d1=pd(v(row,'入党申请书日期')),d2=pd(v(row,'团支部推优日期')),d3=aD,d4=pd(v(row,'确定发展对象日期')),d5=pd(v(row,'预备党员日期')),d6=pd(v(row,'正式党员日期'));
   if(d1&&d2&&d2<d1)warns.push('推优日期早于申请书日期，请核实');
   if(d2&&d3&&d3<d2)warns.push('积极分子日期早于推优日期，请核实');
   if(d3&&d4&&d4<d3)warns.push('发展对象日期早于积极分子日期，请核实');
@@ -334,7 +339,7 @@ function ren(row){
 
   /* ── Timeline ── */
   var fs=[{k:'入党申请书日期',l:'提交入党申请书'},{k:'入党申请书页数',l:'申请书页数'},{k:'团支部推优日期',l:'团支部推优'},{k:'确定积极分子日期',l:'确定为积极分子'},{k:'确定发展对象日期',l:'确定为发展对象'},{k:'预备党员日期',l:'成为预备党员'},{k:'正式党员日期',l:'成为正式党员'}];
-  h+='<div class="cd an cd-full"><div class="rn">'+es(dv(row,'姓名'))+'</div><div class="ri2">学号 '+es(dv(row,'学号'))+(v(row,'所在支部')?' · '+es(v(row,'所在支部')):'')+'</div><div class="sT">入党流程</div><div class="tl">';
+  h+='<div class="cd an"><div class="rn">'+es(dv(row,'姓名'))+'</div><div class="ri2">学号 '+es(dv(row,'学号'))+(v(row,'所在支部')?' · '+es(v(row,'所在支部')):'')+'</div><div class="sT">入党流程</div><div class="tl">';
   for(var i=0;i<fs.length;i++){var f=fs[i],e=ep(row,f.k);h+='<div class="ti'+(e?' ep':'')+'"><div class="tll">'+f.l+'</div><div class="tvl'+(e?' ev':'')+'">'+es(dvf(row,f.k))+'</div></div>'}
   h+='</div></div>';
 
@@ -342,11 +347,14 @@ function ren(row){
   var yu=v(row,'院党校培训'),xi=v(row,'校党校培训'),yp=(yu==='是'),xp=(xi==='是');
   h+='<div class="cd an"><div class="sT">积极分子培训</div><div class="tg"><div class="tri"><div class="trl">院党校</div><div class="trv '+(yp?'pa':'pe')+'">'+(yp?'✓ 已通过':'暂无信息')+'</div></div><div class="tri"><div class="trl">校党校</div><div class="trv '+(xp?'pa':'pe')+'">'+(xp?'✓ 已通过':'暂无信息')+'</div></div></div></div>';
 
-  /* ── Materials checklist ── */
+  /* ── Materials checklist & Tips row ── */
+  h+='<div class="res-row">';
+
+  /* Materials checklist */
   h+='<div class="cd an"><div class="sT">材料清单</div>';
   var cl=[];
   if(stg>=0){
-    cl.push({done:stg>=1,label:'入党申请书',sub:'须本人手写，黑色墨水'});
+    cl.push({done:stg>=1,label:'入党申请书',sub:'人大抬头横线信纸，不少于5页'});
     cl.push({done:stg>=1,label:'党组织派人谈话记录',sub:'问答式，落款日期应在申请书之后'});
   }
   if(stg>=1){
@@ -354,20 +362,20 @@ function ren(row){
     cl.push({done:stg>=3,label:'积极分子确定决议',sub:'考察登记表 P4 党支部意见，日期与首页一致'});
   }
   if(stg>=3){
-    cl.push({done:false,pend:true,label:'思想汇报',sub:'每季度一次，不少于 5 份，每份不少于 3 页，使用人大抬头横线信纸'});
-    cl.push({done:false,pend:true,label:'培养考察情况',sub:'与思想汇报一一对应，落款日期须在对应思想汇报之后'});
-    cl.push({done:stg>=3,label:'考察登记表 P1-P3 基本信息',sub:'信息须全部填完，主要经历须写到当前学段，空白栏填"无"'});
-    cl.push({done:yp,label:'院党校结业证书',sub:'须加盖学校党委和校党校两个章'});
-  }
+    cl.push({done:false,pend:true,label:'思想汇报',sub:'每季度一次，不少于5份，使用人大抬头横线信纸 · 目前已完成 '+repCnt+' 篇'});
+    var ecnt=Math.floor(repCnt/2);
+    cl.push({done:false,pend:true,label:'培养考察情况',sub:'联系人考察 '+repCnt+' 次 · 党支部考察 '+ecnt+' 次'});
+    var yy=yp?'院党校 ✓':'院党校 ✗';var xx=xp?'校党校 ✓':'校党校 ✗';
+  }else{var yy=yp?'院党校 ✓':'院党校 ✗';var xx=xp?'校党校 ✓':'校党校 ✗'}
+  if(stg>=1){cl.push({done:yp,label:'院党校结业证书',sub:yy});cl.push({done:xp,label:'校党校结业证书',sub:xx})}
   if(stg>=4){
     cl.push({done:stg>=4,label:'发展对象座谈会记录',sub:'一张纸 + 考察登记表 P17，日期须一致'});
     cl.push({done:stg>=4,label:'培养联系人意见',sub:'落款时间须在群众意见和支部意见之间'});
     cl.push({done:stg>=4,label:'发展对象确定决议',sub:'支委会意见一张纸 + P18 + 首页日期三者须一致'});
-    cl.push({done:xp,label:'校党校结业证书',sub:'需手写培训情况至考察登记表 P19'});
-    cl.push({done:false,pend:stg>=4,label:'政治审查材料',sub:'主要家庭成员 P2 + P19 + 证明材料'});
-    cl.push({done:false,pend:stg>=4,label:'预备党员前座谈会记录',sub:'3 张纸 + 考察登记表 P19，日期须一致'});
-    cl.push({done:false,pend:stg>=4,label:'支部委员会审查意见',sub:'考察登记表 P20，时间须晚于 P19 所有时间'});
-    cl.push({done:false,pend:stg>=4,label:'综合考察报告',sub:'落款时间须与支委会审查意见一致'});
+    cl.push({done:stg>=4,label:'政治审查材料',sub:'主要家庭成员 P2 + P19 + 证明材料'});
+    cl.push({done:stg>=4,label:'预备党员前座谈会记录',sub:'3 张纸 + 考察登记表 P19，日期须一致'});
+    cl.push({done:stg>=4,label:'支部委员会审查意见',sub:'考察登记表 P20，时间须晚于 P19 所有时间'});
+    cl.push({done:stg>=4,label:'综合考察报告',sub:'落款时间须与支委会审查意见一致'});
   }
   if(stg>=5){
     cl.push({done:stg>=5,label:'入党志愿书'});
@@ -383,8 +391,8 @@ function ren(row){
     h+='<div class="cl-item"><div class="cl-icon">'+icon+'</div><div class="cl-text '+cls+'">'+es(it.label)+(it.sub?'<div class="cl-sub">'+es(it.sub)+'</div>':'')+'</div></div>'}
   h+='</div>';
 
-  /* ── Stage-specific tips ── */
-  h+='<div class="cd an cd-full"><div class="sT">当前阶段注意事项</div>';
+  /* Stage-specific tips */
+  h+='<div class="cd an"><div class="sT">当前阶段注意事项</div>';
   if(stg<=1){
     h+='<div class="tip-card"><div class="tip-title">📝 申请书阶段</div>入党申请书须<strong>本人亲笔书写</strong>，使用黑色墨水钢笔或签字笔。内容须符合时间逻辑，不能写尚未发生的事情。申请书落款日期将作为"申请入党时间"，务必准确。</div>';
   }
@@ -397,13 +405,13 @@ function ren(row){
   if(stg>=5){
     h+='<div class="tip-card"><div class="tip-title">🎯 预备党员阶段</div>① 预备期内继续撰写思想汇报。<br>② 预备期满前提交转正申请书。<br>③ 转正前需要完成群众座谈会、综合考察报告、公示等程序。</div>';
   }
-  h+='</div>';
+  h+='</div></div>';
 
   /* ── Thought reports schedule ── */
-  var aS=v(row,'确定积极分子日期'),aD=pd(aS);
-  h+='<div class="cd an cd-full"><div class="sT">思想汇报与培养考察</div>';
+  h+='<div class="cd an"><div class="sT">思想汇报与培养考察</div>';
   if(!aD)h+='<div class="msg" style="color:var(--n5)"><p>尚未确定为积极分子</p></div>';
-  else{var td=new Date();td.setHours(0,0,0,0);h+='<p style="font-size:.72rem;color:var(--n5);margin-bottom:.4rem">据积极分子日期（'+es(toCN(aS))+'）推算。</p><table class="rt"><thead><tr><th>次</th><th>截止</th><th>汇报</th><th>联系人考察</th><th>支部考察</th></tr></thead><tbody>';for(var j=1;j<=8;j++){var dl=am(aD,j*3),dd=fm(dl),bg,hb=j%2===0;if(td>dl)bg='<span class="bd bdg">已到期</span>';else bg=((dl-td)/864e5<=30)?'<span class="bd bdo">即将到期</span>':'<span class="bd bdy">未到</span>';h+='<tr'+(hb?' class="br"':'')+'><td>'+j+'</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--n3)">—</span>')+'</td></tr>'}h+='<tr class="erd"><td colspan="5">······</td></tr></tbody></table><div class="tb"><strong>注意：</strong>① 联系人考察需<strong>两位分别签名</strong>；② 第2、4、6、8次后党支部考察；③ 按时提交。</div>'}
+  else{var td2=new Date();td2.setHours(0,0,0,0);h+='<p style="font-size:.72rem;color:var(--n5);margin-bottom:.4rem">据积极分子日期（'+es(toCN(aS))+'）推算。</p><table class="rt"><thead><tr><th>次</th><th>截止</th><th>汇报</th><th>联系人考察</th><th>支部考察</th></tr></thead><tbody>';
+  for(var j=1;j<=8;j++){var dl=am(aD,j*3),dd=fm(dl),bg,hb=j%2===0;if(td2>dl)bg='<span class="bd bdg">已到期</span>';else bg=((dl-td2)/864e5<=30)?'<span class="bd bdo">即将到期</span>':'<span class="bd bdy">未到</span>';h+='<tr'+(hb?' class="br"':'')+'><td>'+j+'</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--n3)">—</span>')+'</td></tr>'}h+='<tr class="erd"><td colspan="5">······</td></tr></tbody></table><div class="tb"><strong>注意：</strong>① 联系人考察需<strong>两位分别签名</strong>；② 第2、4、6、8次后党支部考察；③ 按时提交。</div>'}
   h+='</div>';$('res').innerHTML=h}
 })();
 </script>
