@@ -136,7 +136,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
     <div class="dtw" id="tWrap"></div>
   </div>
   <div class="tp" id="tImp"><div class="cd"><h2>导入 xlsx</h2>
-    <div class="radio-group"><label><input type="radio" name="impMode" value="append" checked> 追加导入（保留已有数据）</label><label><input type="radio" name="impMode" value="overwrite"> 完全覆盖</label></div>
+    <div class="radio-group"><label><input type="radio" name="impMode" value="append" checked> 追加导入（保留已有数据）</label><label id="impOwLabel"><input type="radio" name="impMode" value="overwrite"> 完全覆盖</label></div>
     <div class="uz" id="uzD"><input type="file" id="fD" accept=".xlsx,.xls"><p>📊 拖拽或点击上传</p></div><div class="mm" id="impM"></div>
     <div class="mn">列名：姓名、学号、所在支部、入党申请书日期、入党申请书页数、团支部推优日期、确定积极分子日期、确定发展对象日期、预备党员日期、正式党员日期、院党校培训、校党校培训</div></div></div>
   <div class="tp" id="tFaq"><div class="cd"><h2>管理常见问题</h2><div class="uz" id="uzF"><input type="file" id="fF" accept=".json"><p>📋 上传 faq.json</p></div><div class="mm" id="faqAM"></div></div></div>
@@ -191,10 +191,10 @@ function rFaq(){var s=$('faqSec'),l=$('faqL');if(!FAQ.length){s.style.display='n
 $('adminBtn').onclick=function(){if(CUR){CUR=null;$('adminBtn').textContent='管理';$('adminBtn').classList.remove('on');$('adminName').textContent='';$('aView').style.display='none';$('sView').style.display='block';$('refSec').style.display='';$('faqSec').style.display=FAQ.length?'block':'none';$('idGrp').style.display=''}else{$('loginOv').classList.add('op');$('lId').focus()}};
 $('loginX').onclick=function(){$('loginOv').classList.remove('op')};$('loginOv').onclick=function(e){if(e.target===$('loginOv'))$('loginOv').classList.remove('op')};
 $('lBtn').onclick=doLogin;$('lPwd').onkeydown=function(e){if(e.key==='Enter')doLogin()};
-async function doLogin(){var id=$('lId').value.trim(),pw=$('lPwd').value;if(!id||!pw){sm($('lMsg'),'请填写完整','er');return}var h=await sha(pw),adm=null;for(var i=0;i<ADMINS.length;i++){if(ADMINS[i].id===id&&ADMINS[i].pwdHash===h){adm=ADMINS[i];break}}if(!adm){sm($('lMsg'),'学号或密码错误','er');$('lPwd').value='';return}CUR=adm;$('loginOv').classList.remove('op');$('lId').value='';$('lPwd').value='';$('lMsg').className='mm';$('adminBtn').textContent='退出管理';$('adminBtn').classList.add('on');$('adminName').textContent=CUR.name+' · '+ROLES[CUR.role];$('sView').style.display='none';$('aView').style.display='block';$('refSec').style.display='none';$('faqSec').style.display='none';$('idGrp').style.display='none';$('tabAdm').style.display=CUR.role==='super'?'':'none';populateBranches();rTable();rStats();lCfg();if(CUR.role==='super')rAdmins()}
+async function doLogin(){var id=$('lId').value.trim(),pw=$('lPwd').value;if(!id||!pw){sm($('lMsg'),'请填写完整','er');return}var h=await sha(pw),adm=null;for(var i=0;i<ADMINS.length;i++){if(ADMINS[i].id===id&&ADMINS[i].pwdHash===h){adm=ADMINS[i];break}}if(!adm){sm($('lMsg'),'学号或密码错误','er');$('lPwd').value='';return}CUR=adm;$('loginOv').classList.remove('op');$('lId').value='';$('lPwd').value='';$('lMsg').className='mm';$('adminBtn').textContent='退出管理';$('adminBtn').classList.add('on');$('adminName').textContent=CUR.name+' · '+ROLES[CUR.role];$('sView').style.display='none';$('aView').style.display='block';$('refSec').style.display='none';$('faqSec').style.display='none';$('idGrp').style.display='none';$('tabAdm').style.display=CUR.role==='super'?'':'none';setupImportTab();populateBranches();rTable();rStats();lCfg();if(CUR.role==='super')rAdmins()}
 
 /* TABS */
-document.querySelectorAll('.at').forEach(function(t){t.onclick=function(){document.querySelectorAll('.at').forEach(function(x){x.classList.remove('ac')});document.querySelectorAll('.tp').forEach(function(x){x.classList.remove('ac')});t.classList.add('ac');$(t.dataset.t).classList.add('ac')}});
+document.querySelectorAll('.at').forEach(function(t){t.onclick=function(){document.querySelectorAll('.at').forEach(function(x){x.classList.remove('ac')});document.querySelectorAll('.tp').forEach(function(x){x.classList.remove('ac')});t.classList.add('ac');$(t.dataset.t).classList.add('ac');if(t.dataset.t==='tImp')setupImportTab()}});
 
 /* STATS */
 function rStats(){
@@ -213,6 +213,7 @@ function populateBranches(){
 
 /* TABLE */
 function canEdit(r){if(!CUR)return false;if(CUR.role==='super'||CUR.role==='secretary')return true;return r['所在支部']===CUR.scope}
+function setupImportTab(){var ow=$('impOwLabel');if(!ow)return;if(CUR&&CUR.role!=='super'){ow.style.display='none';var app=document.querySelector('input[name="impMode"][value="append"]');if(app)app.checked=true}else{ow.style.display=''}}
 
 function rTable(){
   var q=($('aSearch').value||'').toLowerCase(),fb=$('fBranch').value,fs=$('fStage').value;
@@ -272,7 +273,7 @@ $('exportBtn').onclick=function(){var clean=DATA.map(function(r){var c={};FIELDS
 /* IMPORT */
 $('fD').onchange=function(e){if(e.target.files.length)doImp(e.target.files[0])};
 $('uzD').ondragover=function(e){e.preventDefault()};$('uzD').ondrop=function(e){e.preventDefault();if(e.dataTransfer.files.length)doImp(e.dataTransfer.files[0])};
-function doImp(f){var mode=document.querySelector('input[name="impMode"]:checked').value;var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(e.target.result,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],j=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});var nd=j.map(function(r){var c={};for(var k in r)c[k.trim()]=String(r[k]).trim();return c});if(mode==='overwrite'){DATA=nd}else{DATA=DATA.concat(nd)}sm($('impM'),'✓ '+(mode==='overwrite'?'已覆盖':'已追加')+' '+nd.length+' 条，共 '+DATA.length+' 条','ok');$('searchBtn').disabled=false;populateBranches();rTable();rStats()}catch(err){sm($('impM'),'导入失败','er')}};r.readAsArrayBuffer(f)}
+function doImp(f){var mode=document.querySelector('input[name="impMode"]:checked').value;if(mode==='overwrite'&&CUR&&CUR.role!=='super'){sm($('impM'),'仅超级管理员可使用完全覆盖','er');return}var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(e.target.result,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],j=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});var nd=j.map(function(r){var c={};for(var k in r)c[k.trim()]=String(r[k]).trim();return c});if(mode==='overwrite'){DATA=nd}else{DATA=DATA.concat(nd)}sm($('impM'),'✓ '+(mode==='overwrite'?'已覆盖':'已追加')+' '+nd.length+' 条，共 '+DATA.length+' 条','ok');$('searchBtn').disabled=false;populateBranches();rTable();rStats()}catch(err){sm($('impM'),'导入失败','er')}};r.readAsArrayBuffer(f)}
 
 /* FAQ */
 $('fF').onchange=function(e){if(e.target.files.length)doFU(e.target.files[0])};
