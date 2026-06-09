@@ -51,8 +51,9 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .msg{text-align:center;padding:1.2rem;border-radius:var(--r)}.msg.nf{background:var(--n1);color:var(--n7)}.msg p{font-size:.85rem}
 .rl{display:inline-flex;align-items:center;gap:.3rem;padding:.45rem .8rem;background:var(--red-50);color:var(--red-700);border:1px solid var(--red-100);border-radius:var(--rs);font-size:.8rem;font-weight:500;text-decoration:none;transition:all .2s}.rl:hover{background:var(--red-100)}
 /* Checklist */
-.cl-section{font-size:.74rem;font-weight:600;color:var(--red-800);padding:.5rem 0 .15rem;margin-top:.1rem}
-.cl-item{display:flex;align-items:flex-start;gap:.4rem;padding:.35rem 0;border-bottom:1px solid var(--n1);font-size:.78rem}.cl-item:last-child{border-bottom:none}
+.cl-section{font-size:.74rem;font-weight:600;color:var(--red-800);padding:.5rem 0 .15rem;margin-top:.1rem;border-top:2px solid var(--red-100)}
+.cl-section:first-child{border-top:none}
+.cl-item{display:flex;align-items:flex-start;gap:.4rem;padding:.35rem 0;font-size:.78rem}
 .cl-icon{flex-shrink:0;width:1rem;text-align:center;font-size:.8rem;line-height:1.4}
 .cl-text{flex:1;color:var(--n7)}.cl-text.done{color:var(--green-700)}.cl-text.pend{color:var(--orange-700)}.cl-text.wait{color:var(--n5)}
 .cl-sub{font-size:.68rem;color:var(--n5);margin-top:.08rem}
@@ -348,9 +349,6 @@ function ren(row){
   for(var i=0;i<fs.length;i++){var f=fs[i],e=ep(row,f.k);h+='<div class="ti'+(e?' ep':'')+'"><div class="tll">'+f.l+'</div><div class="tvl'+(e?' ev':'')+'">'+es(dvf(row,f.k))+'</div></div>'}
   h+='</div></div>';
 
-  var yu=v(row,'院党校培训'),xi=v(row,'校党校培训'),yp=(yu==='是'),xp=(xi==='是');
-  h+='<div class="cd an"><div class="sT">积极分子培训</div><div class="tg"><div class="tri"><div class="trl">院党校</div><div class="trv '+(yp?'pa':'pe')+'">'+(yp?'✓ 已通过':'暂无信息')+'</div></div><div class="tri"><div class="trl">校党校</div><div class="trv '+(xp?'pa':'pe')+'">'+(xp?'✓ 已通过':'暂无信息')+'</div></div></div></div>';
-
   /* ── Column 2: Materials checklist ── */
   h+='<div class="cd an"><div class="sT">材料清单</div>';
   function cladd(title,items){if(!items||!items.length)return'';var s='<div class="cl-section">'+title+'</div>';for(var c=0;c<items.length;c++){var it=items[c],icon=it.done?'✅':it.pend?'🔶':'⬜',cls=it.done?'done':it.pend?'pend':'wait';s+='<div class="cl-item"><div class="cl-icon">'+icon+'</div><div class="cl-text '+cls+'">'+es(it.label)+(it.sub?'<div class="cl-sub">'+es(it.sub)+'</div>':'')+'</div></div>'}return s}
@@ -398,10 +396,12 @@ function ren(row){
   if(stg>=5){
     h+='<div class="tip-card"><div class="tip-title">🎯 预备党员的教育考察和转正</div>① 预备期内<strong>每季度继续撰写思想汇报</strong>。<br>② 预备期满前提交转正申请书。<br>③ 转正前须完成群众座谈会、综合考察报告、公示等全部程序。<br>④ 转正支部大会记录须<strong>支部书记签字</strong>。</div>';
   }
-  h+='</div></div>';
+  h+='</div>';
 
-  /* ── Thought reports schedule (full width) ── */
-  h+='<div class="cd an"><div class="sT">思想汇报与培养考察</div>';
+  var yu=v(row,'院党校培训'),xi=v(row,'校党校培训'),yp=(yu==='是'),xp=(xi==='是');
+  /* ── Thought reports schedule + Training side by side ── */
+  h+='<div class="res-row">';
+  h+='<div class="cd an" style="flex:2"><div class="sT">思想汇报与培养考察</div>';
   if(!aD)h+='<div class="msg" style="color:var(--n5)"><p>尚未确定为积极分子</p></div>';
   else{
     var td2=new Date();td2.setHours(0,0,0,0);
@@ -415,6 +415,8 @@ function ren(row){
       else bg=((dl-td2)/864e5<=30)?'<span class="bd bdo">即将到期</span>':'<span class="bd bdy">未到</span>';
       h+='<tr'+(hb?' class="br"':'')+'><td>'+j+'</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--n3)">—</span>')+'</td></tr>'}
     h+='</tbody></table><div class="tb"><strong>注意：</strong>① 联系人考察需<strong>两位分别签名</strong>；② 第2、4、6、8…次后党支部考察；③ 按时提交。</div>'}
+  h+='</div>';
+  h+='<div class="cd an" style="flex:1"><div class="sT">积极分子培训</div><div class="tg"><div class="tri"><div class="trl">院党校</div><div class="trv '+(yp?'pa':'pe')+'">'+(yp?'✓ 已通过':'暂无信息')+'</div></div><div class="tri"><div class="trl">校党校</div><div class="trv '+(xp?'pa':'pe')+'">'+(xp?'✓ 已通过':'暂无信息')+'</div></div></div></div>';
   h+='</div>';
 
   /* ── Contact email card ── */
