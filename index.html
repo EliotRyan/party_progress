@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>本科第一党支部 · 入党积极分子电子档案</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
 :root{--red-900:#5c0d14;--red-800:#7a121a;--red-700:#8b1723;--red-600:#a51d2a;--red-500:#c4272e;--red-100:#fce4e6;--red-50:#fef2f3;--gold-500:#d4a843;--gold-300:#ebd08b;--green-700:#15803d;--green-600:#16a34a;--green-100:#dcfce7;--orange-700:#c2410c;--orange-600:#ea580c;--orange-100:#ffedd5;--blue-700:#1d4ed8;--blue-600:#2563eb;--blue-100:#dbeafe;--purple-700:#7e22ce;--purple-100:#f3e8ff;--teal-700:#0f766e;--teal-100:#ccfbf1;--n9:#1a1a1a;--n7:#404040;--n6:#525252;--n5:#737373;--n4:#a3a3a3;--n3:#d4d4d4;--n2:#e5e5e5;--n1:#f5f5f5;--n0:#fafafa;--bg:#fdfbf7;--card:rgba(255,255,255,0.55);--r:12px;--rs:8px}
@@ -45,7 +46,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .tl{position:relative;padding-left:1.5rem}.tl::before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:linear-gradient(to bottom,var(--red-500),var(--gold-500));border-radius:1px}
 .ti{position:relative;padding-bottom:.9rem}.ti:last-child{padding-bottom:0}.ti::before{content:'';position:absolute;left:-1.5rem;top:5px;width:9px;height:9px;background:var(--red-600);border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(199,39,46,.3)}.ti.ep::before{background:var(--n3);box-shadow:0 0 0 2px var(--n2)}
 .tll{font-size:.8rem;font-weight:500;color:var(--n5)}.tvl{font-size:.95rem;font-weight:500;color:var(--n9);margin-top:.05rem}.tvl.ev{color:var(--n4);font-weight:400;font-family:'KaiTi','STKaiti','Noto Serif SC',serif;font-size:.88rem}
-@media(min-width:860px){.tl.hz{padding-left:0}.tl.hz::before{left:0;right:0;top:auto;bottom:18px;width:auto;height:2px;background:linear-gradient(to right,var(--red-500),var(--gold-500));border-radius:1px}.tl.hz{display:flex;gap:0;overflow-x:auto}.tl.hz .ti{padding-bottom:0.6rem;padding-top:0;flex:1;min-width:0;text-align:center}.tl.hz .ti::before{left:50%;top:auto;bottom:14px;transform:translateX(-50%)}.tl.hz .tll{margin-bottom:2rem}.tl.hz .tvl{font-size:.82rem}}
+@media(min-width:860px){.tl.hz{padding-left:0}.tl.hz::before{left:0;right:0;top:auto;bottom:48px;width:auto;height:2px;background:linear-gradient(to right,var(--red-500),var(--gold-500));border-radius:1px}.tl.hz{display:flex;gap:0;overflow-x:auto}.tl.hz .ti{padding-bottom:0.6rem;padding-top:0;flex:1;min-width:0;text-align:center}.tl.hz .ti::before{left:50%;top:auto;bottom:44px;transform:translateX(-50%)}.tl.hz .tll{margin-bottom:2rem}.tl.hz .tvl{font-size:.82rem}}
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.3rem}
 .tri{background:var(--n0);border-radius:var(--rs);padding:.6rem .7rem;text-align:center;border:1px solid var(--n2)}.tri .trl{font-size:.8rem;color:var(--n5);margin-bottom:.15rem}.tri .trv{font-size:.9rem;font-weight:600}.tri .trv.pa{color:var(--green-700)}.tri .trv.pe{color:var(--n4);font-weight:400;font-family:'KaiTi','STKaiti','Noto Serif SC',serif;font-size:.85rem}
 .rt{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.3rem}.rt th{background:var(--n1);font-weight:500;color:var(--n6);padding:.4rem .35rem;text-align:center;border-bottom:1px solid var(--n2);white-space:nowrap}.rt td{padding:.4rem .35rem;border-bottom:1px solid var(--n1);text-align:center}.rt tr:last-child td{border-bottom:none}.rt tr.br{background:var(--n0)}
@@ -115,6 +116,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
     <div class="fg"><label>姓名 <span class="rq">*</span></label><input class="fi" id="nameIn" placeholder="请输入姓名"><div class="fie" id="nameErr">请输入姓名</div></div>
     <div class="fg" id="idGrp"><label>学号（10位）<span class="rq">*</span></label><input class="fi" id="idIn" placeholder="请输入学号" maxlength="10" inputmode="numeric"><div class="fie" id="idErr">请输入10位学号</div></div>
     <button class="bt bt-p bt-bl" id="searchBtn" disabled>查 询</button>
+    <button class="bt bt-s bt-bl" id="guideBtn" style="margin-top:.5rem">📖 使用指南</button>
   </div>
   <div id="res"></div>
   <div class="ft">数据仅在浏览器中处理，不会上传至任何服务器。</div>
@@ -157,6 +159,8 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 <div class="ov" id="loginOv"><div class="md"><button class="md-x" id="loginX">✕</button><h3>管理员登录</h3><div class="fg"><label>学号</label><input class="fi" id="lId" maxlength="10"></div><div class="fg"><label>密码</label><input type="password" class="fi" id="lPwd"></div><button class="bt bt-p bt-bl" id="lBtn">登录</button><div class="mm" id="lMsg"></div></div></div>
 <!-- EDIT -->
 <div class="ov" id="editOv"><div class="md"><button class="md-x" id="editX">✕</button><h3 id="editTi">编辑</h3><div id="editFs"></div><button class="bt bt-p bt-bl" id="editSv" style="margin-top:.6rem">保存</button></div></div>
+<!-- GUIDE -->
+<div class="ov" id="guideOv"><div class="md" style="max-width:720px;max-height:80vh;overflow-y:auto"><button class="md-x" id="guideX">✕</button><div id="guideContent" style="font-size:.85rem;line-height:1.7;color:var(--n7)"></div></div></div>
 <!-- ADD -->
 <div class="ov" id="addOv"><div class="md"><button class="md-x" id="addX">✕</button><h3>新增档案</h3><div id="addFs"></div><button class="bt bt-p bt-bl" id="addSv" style="margin-top:.6rem">添加</button></div></div>
 
@@ -187,6 +191,9 @@ function getStage(r){
   if(v(r,'确定积极分子日期'))return 3;if(v(r,'团支部推优日期'))return 2;if(v(r,'入党申请书日期'))return 1;return 0;
 }
 
+/* GUIDE */
+$('guideBtn').onclick=async function(){$('guideOv').classList.add('op');$('guideContent').innerHTML='<p style="text-align:center;color:var(--n5)">加载中…</p>';try{var r=await fetch('README.md');if(!r.ok)throw 0;var md=await r.text();$('guideContent').innerHTML=marked.parse(md)}catch(e){$('guideContent').innerHTML='<p style="color:var(--red-600)">加载失败，请稍后重试。</p>'}};
+$('guideX').onclick=function(){$('guideOv').classList.remove('op')};$('guideOv').onclick=function(e){if(e.target===$('guideOv'))$('guideOv').classList.remove('op')};
 /* AUTO LOAD */
 (async function(){sbn('正在加载…','ld');try{var r=await fetch('data.xlsx',{cache:'no-cache'});if(!r.ok)throw 0;px(await r.arrayBuffer());sbn('✓ 已加载 '+DATA.length+' 条','ok');setTimeout(function(){$('banner').classList.remove('sh')},2500)}catch(e){sbn('加载失败','fl')}})();
 (async function(){try{var r=await fetch('admins.json',{cache:'no-cache'});if(r.ok)ADMINS=await r.json()}catch(e){ADMINS=[]}})();
