@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
-:root{--red-900:#5c0d14;--red-800:#7a121a;--red-700:#8b1723;--red-600:#a51d2a;--red-500:#c4272e;--red-100:#fce4e6;--red-50:#fef2f3;--gold-500:#d4a843;--gold-300:#ebd08b;--green-700:#15803d;--green-600:#16a34a;--green-100:#dcfce7;--orange-700:#c2410c;--orange-600:#ea580c;--orange-100:#ffedd5;--blue-700:#1d4ed8;--blue-600:#2563eb;--blue-100:#dbeafe;--purple-700:#7e22ce;--purple-100:#f3e8ff;--teal-700:#0f766e;--teal-100:#ccfbf1;--n9:#1a1a1a;--n7:#404040;--n6:#525252;--n5:#737373;--n4:#a3a3a3;--n3:#d4d4d4;--n2:#e5e5e5;--n1:#f5f5f5;--n0:#fafafa;--bg:#fdfbf7;--card:rgba(255,255,255,0.88);--r:12px;--rs:8px}
+:root{--red-900:#5c0d14;--red-800:#7a121a;--red-700:#8b1723;--red-600:#a51d2a;--red-500:#c4272e;--red-100:#fce4e6;--red-50:#fef2f3;--gold-500:#d4a843;--gold-300:#ebd08b;--green-700:#15803d;--green-600:#16a34a;--green-100:#dcfce7;--orange-700:#c2410c;--orange-600:#ea580c;--orange-100:#ffedd5;--blue-700:#1d4ed8;--blue-600:#2563eb;--blue-100:#dbeafe;--purple-700:#7e22ce;--purple-100:#f3e8ff;--teal-700:#0f766e;--teal-100:#ccfbf1;--n9:#1a1a1a;--n7:#404040;--n6:#525252;--n5:#737373;--n4:#a3a3a3;--n3:#d4d4d4;--n2:#e5e5e5;--n1:#f5f5f5;--n0:#fafafa;--bg:#fdfbf7;--card:rgba(255,255,255,0.72);--r:12px;--rs:8px}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--n9);min-height:100vh;line-height:1.6;font-size:18px}
 body::before{content:'';position:fixed;inset:0;background:url("watermark.png") no-repeat center center/80%;opacity:.08;pointer-events:none;z-index:0}
 .hd{background:linear-gradient(135deg,var(--red-700),var(--red-600),var(--red-800));padding:1.5rem;text-align:center;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:.8rem}
@@ -15,7 +15,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .hd-logo{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:center top;filter:brightness(0) invert(78%) sepia(40%) saturate(600%) hue-rotate(350deg) brightness(95%);opacity:.9;flex-shrink:0;position:relative}
 .hd-t{position:relative}.hd h1{font-family:'Noto Serif SC',serif;font-size:clamp(1.2rem,4vw,1.8rem);color:#fff;font-weight:700;letter-spacing:.05em}.hd .sub{color:var(--gold-300);font-size:clamp(.7rem,1.8vw,.85rem);margin-top:.2rem;font-weight:300;letter-spacing:.06em}
 .hd-btn{position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);font-size:.8rem;padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .2s;z-index:2}.hd-btn:hover{background:rgba(255,255,255,.2);color:#fff}.hd-btn.on{background:rgba(255,255,255,.25);color:#fff;border-color:var(--gold-500)}
-.admin-name{font-size:.85rem;color:var(--gold-500);position:absolute;right:5rem;top:50%;transform:translateY(-50%);z-index:2;font-weight:500}
+.admin-name{font-size:.85rem;color:var(--gold-500);position:absolute;right:6.5rem;top:50%;transform:translateY(-50%);z-index:2;font-weight:500;max-width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ct{max-width:1300px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}.act{max-width:1200px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
 .res-grid{display:grid;gap:1rem;align-items:start}
 @media(min-width:1100px){.res-grid{grid-template-columns:1fr 1fr 1fr}}
@@ -83,7 +83,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .atl select{padding:.45rem .55rem;font-size:.82rem;border:1.5px solid var(--n3);border-radius:5px;font-family:inherit;background:var(--n0)}
 .bb{background:var(--blue-100);border-radius:var(--rs);padding:.55rem .85rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;font-size:.85rem;color:var(--blue-700)}
 .bb select,.bb input{padding:.3rem .45rem;font-size:.82rem;border:1px solid var(--blue-600);border-radius:4px;font-family:inherit;background:#fff}.bb input{width:140px}
-.dtw{overflow-x:auto;max-height:55vh;overflow-y:auto;border:1px solid var(--n2);border-radius:var(--rs);background:rgba(255,255,255,0.9)}
+.dtw{overflow-x:auto;max-height:55vh;overflow-y:auto;border:1px solid var(--n2);border-radius:var(--rs);background:rgba(255,255,255,0.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .dt{width:100%;border-collapse:collapse;font-size:.8rem}.dt th{background:var(--n1);font-weight:500;color:var(--n6);padding:.45rem .35rem;text-align:left;border-bottom:1px solid var(--n2);white-space:nowrap;position:sticky;top:0;z-index:2;cursor:pointer;user-select:none}.dt th:hover{background:var(--n2)}.dt th .so{font-size:.65rem;margin-left:.15rem;color:var(--n4)}.dt td{padding:.4rem .35rem;border-bottom:1px solid var(--n1);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dt tr:hover{background:var(--red-50)}.dt .ck{width:28px;text-align:center}.dt .ck input{width:15px;height:15px;cursor:pointer;accent-color:var(--red-600)}.dt .op{white-space:nowrap}
 .bp{background:var(--green-100);color:var(--green-700);padding:.08em .35em;border-radius:3px;font-size:.78rem;font-weight:500}
 .stg{padding:.12em .4em;border-radius:3px;font-size:.74rem;font-weight:600;white-space:nowrap}
@@ -92,7 +92,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 .uz{border:2px dashed var(--n3);border-radius:var(--rs);padding:.85rem;text-align:center;position:relative;cursor:pointer;transition:all .2s;margin-top:.4rem}.uz:hover{border-color:var(--red-500);background:var(--red-50)}.uz input{position:absolute;inset:0;opacity:0;cursor:pointer}.uz p{font-size:.85rem;color:var(--n5)}
 .mn{font-size:.74rem;color:var(--n5);line-height:1.4;background:var(--n1);padding:.45rem .65rem;border-radius:5px;margin-top:.5rem}
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;padding:1rem}.ov.op{display:flex}
-.md{background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:var(--r);padding:1.5rem;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;max-height:85vh;overflow-y:auto}.md h3{font-size:1rem;font-weight:600;color:var(--red-700);margin-bottom:.7rem}.md-x{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--n4)}.md-x:hover{color:var(--n9)}
+.md{background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:var(--r);padding:1.5rem;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;max-height:85vh;overflow-y:auto}.md h3{font-size:1rem;font-weight:600;color:var(--red-700);margin-bottom:.7rem}.md-x{position:absolute;top:.7rem;right:.7rem;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--n4)}.md-x:hover{color:var(--n9)}
 .ft{text-align:center;padding:1.2rem 1rem;font-size:.74rem;color:var(--n5)}
 .radio-group{display:flex;gap:1rem;margin:.5rem 0}.radio-group label{font-size:.9rem;color:var(--n7);cursor:pointer;display:flex;align-items:center;gap:.3rem}
 .contact-card{background:var(--blue-100);border:1px solid var(--blue-600);border-radius:var(--rs);padding:.75rem .95rem;margin-bottom:1rem;font-size:.88rem;color:var(--blue-700);line-height:1.5}
@@ -349,15 +349,21 @@ function ren(row){
   if(warns.length){for(var w=0;w<warns.length;w++)h+='<div class="dw">'+warns[w]+'</div>'}
 
   /* ── Info + Timeline card ── */
-  var fs=[{k:'入党申请书日期',l:'提交入党申请书'},{k:'入党申请书页数',l:'申请书页数'},{k:'团支部推优日期',l:'团支部推优'},{k:'确定积极分子日期',l:'确定为积极分子'},{k:'确定发展对象日期',l:'确定为发展对象'},{k:'预备党员日期',l:'成为预备党员'},{k:'正式党员日期',l:'成为正式党员'}];
+  var fs=[{k:'入党申请书日期',l:'提交入党申请书'},{k:'团支部推优日期',l:'团支部推优'},{k:'确定积极分子日期',l:'确定为积极分子'},{k:'确定发展对象日期',l:'确定为发展对象'},{k:'预备党员日期',l:'成为预备党员'},{k:'正式党员日期',l:'成为正式党员'}];
   h+='<div class="cd an"><div class="rn">'+es(dv(row,'姓名'))+'</div><div class="ri2">学号 '+es(dv(row,'学号'))+(v(row,'所在支部')?' · '+es(v(row,'所在支部')):'')+'</div><div class="sT">入党流程</div><div class="tl hz">';
   for(var i=0;i<fs.length;i++){var f=fs[i],e=ep(row,f.k);h+='<div class="ti'+(e?' ep':'')+'"><div class="tll">'+f.l+'</div><div class="tvl'+(e?' ev':'')+'">'+es(dvf(row,f.k))+'</div></div>'}
   h+='</div></div>';
 
+  /* ── Pages + Training + Sample form side by side ── */
+  var yu=v(row,'院党校培训'),xi=v(row,'校党校培训'),yp=(yu==='是'),xp=(xi==='是'),pg=v(row,'入党申请书页数');
+  h+='<div class="res-row">';
+  h+='<div class="cd an"><div class="sT">📄 入党申请书页数</div><div class="tg"><div class="tri"><div class="trl">申请书写页数</div><div class="trv '+(pg?'pa':'pe')+'">'+(pg?es(pg)+' 页':'暂无信息')+'</div></div></div></div>';
+  h+='<div class="cd an"><div class="sT">积极分子培训</div><div class="tg"><div class="tri"><div class="trl">院党校</div><div class="trv '+(yp?'pa':'pe')+'">'+(yp?'✓ 已通过':'暂无信息')+'</div></div><div class="tri"><div class="trl">校党校</div><div class="trv '+(xp?'pa':'pe')+'">'+(xp?'✓ 已通过':'暂无信息')+'</div></div></div></div>';
+  h+='<div class="cd an"><div class="sT">📄 考察登记表样表</div><p style="font-size:.85rem;color:var(--n5);margin-bottom:.5rem">填写培养考察登记表时请参照样表。</p><a href="sample.pdf" target="_blank" class="rl">📎 查看填写参考</a></div>';
+  h+='</div>';
+
   /* ── Materials checklist + Stage tips side by side ── */
   h+='<div class="res-row">';
-
-  var yu=v(row,'院党校培训'),xi=v(row,'校党校培训'),yp=(yu==='是'),xp=(xi==='是');
   h+='<div class="cd an"><div class="sT">材料清单</div>';
   function cladd(title,items){if(!items||!items.length)return'';var s='<div class="cl-section">'+title+'</div>';for(var c=0;c<items.length;c++){var it=items[c],icon=it.done?'✅':it.pend?'🔶':'⬜',cls=it.done?'done':it.pend?'pend':'wait';s+='<div class="cl-item"><div class="cl-icon">'+icon+'</div><div class="cl-text '+cls+'">'+es(it.label)+(it.sub?'<div class="cl-sub">'+es(it.sub)+'</div>':'')+'</div></div>'}return s}
   var yy=(yp?'院党校 ✓':'院党校 ✗'),xx=(xp?'校党校 ✓':'校党校 ✗');
@@ -423,12 +429,6 @@ function ren(row){
       else bg=((dl-td2)/864e5<=30)?'<span class="bd bdo">即将到期</span>':'<span class="bd bdy">未到</span>';
       h+='<tr'+(hb?' class="br"':'')+'><td>'+j+'</td><td>'+dd+'</td><td>'+bg+'</td><td>'+bg+'</td><td>'+(hb?bg:'<span style="color:var(--n3)">—</span>')+'</td></tr>'}
     h+='</tbody></table><div class="tb"><strong>注意：</strong>① 联系人考察需<strong>两位分别签名</strong>；② 第2、4、6、8…次后党支部考察；③ 按时提交。</div>'}
-  h+='</div>';
-
-  /* ── Training + Sample form side by side ── */
-  h+='<div class="res-row">';
-  h+='<div class="cd an"><div class="sT">积极分子培训</div><div class="tg"><div class="tri"><div class="trl">院党校</div><div class="trv '+(yp?'pa':'pe')+'">'+(yp?'✓ 已通过':'暂无信息')+'</div></div><div class="tri"><div class="trl">校党校</div><div class="trv '+(xp?'pa':'pe')+'">'+(xp?'✓ 已通过':'暂无信息')+'</div></div></div></div>';
-  h+='<div class="cd an"><div class="sT">📄 考察登记表样表</div><p style="font-size:.85rem;color:var(--n5);margin-bottom:.5rem">填写培养考察登记表时请参照样表。</p><a href="sample.pdf" target="_blank" class="rl">📎 查看填写参考</a></div>';
   h+='</div>';
 
   /* ── Contact email card (at bottom) ── */
