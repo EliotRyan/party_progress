@@ -141,7 +141,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
       <button class="bt bt-sm bt-s" id="exportBtn">📥 导出</button>
       <button class="bt bt-sm bt-g" id="saveAll">💾 保存</button>
       <button class="bt bt-sm bt-s" id="importCfgBtn" style="display:none">📥 导入配置</button>
-      <button class="bt bt-sm bt-s" id="adminGuideBtn">📖 管理指南</button>
+      <button class="bt bt-sm bt-p" id="adminGuideBtn">📖 管理指南</button>
     </div>
     <div id="bBar"></div>
     <div class="dtw" id="tWrap"></div>
@@ -157,7 +157,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
 </div>
 
 <!-- LOGIN -->
-<div class="ov" id="loginOv"><div class="md"><button class="md-x" id="loginX">✕</button><h3>管理员登录</h3><div class="fg"><label>学号</label><input class="fi" id="lId" maxlength="10"></div><div class="fg"><label>密码</label><input type="password" class="fi" id="lPwd"></div><button class="bt bt-p bt-bl" id="lBtn">登录</button><div class="mm" id="lMsg"></div></div></div>
+<div class="ov" id="loginOv"><div class="md"><button class="md-x" id="loginX">✕</button><h3>管理员登录</h3><div class="fg"><label>学号</label><input class="fi" id="lId" maxlength="10"></div><div class="fg"><label>密码</label><input type="password" class="fi" id="lPwd"></div><button class="bt bt-p bt-bl" id="lBtn">登录</button><button class="bt bt-s bt-bl" id="loginGuideBtn" style="margin-top:.5rem">📖 管理指南</button><div class="mm" id="lMsg"></div></div></div>
 <!-- EDIT -->
 <div class="ov" id="editOv"><div class="md"><button class="md-x" id="editX">✕</button><h3 id="editTi">编辑</h3><div id="editFs"></div><button class="bt bt-p bt-bl" id="editSv" style="margin-top:.6rem">保存</button></div></div>
 <!-- GUIDE -->
@@ -203,7 +203,7 @@ function px(buf){var wb=XLSX.read(buf,{type:'array',cellDates:true}),ws=wb.Sheet
 
 /* LOGIN */
 $('adminBtn').onclick=function(){if(CUR){CUR=null;$('adminBtn').textContent='管理';$('adminBtn').classList.remove('on');$('adminName').textContent='';$('aView').style.display='none';$('sView').style.display='block';$('idGrp').style.display=''}else{$('loginOv').classList.add('op');$('lId').focus()}};
-$('loginX').onclick=function(){$('loginOv').classList.remove('op')};$('loginOv').onclick=function(e){if(e.target===$('loginOv'))$('loginOv').classList.remove('op')};
+$('loginX').onclick=function(){$('loginOv').classList.remove('op')};$('loginOv').onclick=function(e){if(e.target===$('loginOv'))$('loginOv').classList.remove('op')};$('loginGuideBtn').onclick=async function(){$('guideOv').classList.add('op');$('guideContent').innerHTML='<p style="text-align:center;color:var(--n5)">加载中…</p>';try{var r=await fetch('ADMIN_GUIDE.md');if(!r.ok)throw 0;var md=await r.text();$('guideContent').innerHTML=marked.parse(md)}catch(e){$('guideContent').innerHTML='<p style="color:var(--red-600)">加载失败，请稍后重试。</p>'}};
 $('lBtn').onclick=doLogin;$('lPwd').onkeydown=function(e){if(e.key==='Enter')doLogin()};
 async function doLogin(){var id=$('lId').value.trim(),pw=$('lPwd').value;if(!id||!pw){sm($('lMsg'),'请填写完整','er');return}var h=await sha(pw),adm=null;for(var i=0;i<ADMINS.length;i++){if(ADMINS[i].id===id&&ADMINS[i].pwdHash===h){adm=ADMINS[i];break}}if(!adm){sm($('lMsg'),'学号或密码错误','er');$('lPwd').value='';return}CUR=adm;$('loginOv').classList.remove('op');$('lId').value='';$('lPwd').value='';$('lMsg').className='mm';$('adminBtn').textContent='退出管理';$('adminBtn').classList.add('on');$('adminName').textContent=CUR.name+' · '+ROLES[CUR.role];$('sView').style.display='none';$('aView').style.display='block';$('idGrp').style.display='none';$('tabAdm').style.display=(CUR.role==='super'||CUR.role==='secretary')?'':'none';$('tabCfg').style.display=CUR.role==='super'?'':'none';$('cfgPanel').style.display=CUR.role==='super'?'':'none';$('shareImport').style.display=CUR.role==='super'?'none':'';$('importCfgBtn').style.display=CUR.role==='super'?'none':'';setupImportTab();populateBranches();rTable();rStats();lCfg();var naSecOpt=document.querySelector('#naRole option[value="secretary"]');if(naSecOpt)naSecOpt.style.display=CUR.role==='secretary'?'none':'';if(CUR.role==='secretary'){$('naRole').value='contact';$('naScopeGrp').style.display=''}if(CUR.role==='super'||CUR.role==='secretary')rAdmins()}
 
