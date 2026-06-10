@@ -141,6 +141,7 @@ body::before{content:'';position:fixed;inset:0;background:url("watermark.png") n
       <button class="bt bt-sm bt-s" id="exportBtn">📥 导出</button>
       <button class="bt bt-sm bt-g" id="saveAll">💾 保存</button>
       <button class="bt bt-sm bt-s" id="importCfgBtn" style="display:none">📥 导入配置</button>
+      <button class="bt bt-sm bt-s" id="adminGuideBtn">📖 管理指南</button>
     </div>
     <div id="bBar"></div>
     <div class="dtw" id="tWrap"></div>
@@ -192,7 +193,7 @@ function getStage(r){
 }
 
 /* GUIDE */
-$('guideBtn').onclick=async function(){$('guideOv').classList.add('op');$('guideContent').innerHTML='<p style="text-align:center;color:var(--n5)">加载中…</p>';try{var r=await fetch('README.md');if(!r.ok)throw 0;var md=await r.text();$('guideContent').innerHTML=marked.parse(md)}catch(e){$('guideContent').innerHTML='<p style="color:var(--red-600)">加载失败，请稍后重试。</p>'}};
+$('guideBtn').onclick=async function(){$('guideOv').classList.add('op');$('guideContent').innerHTML='<p style="text-align:center;color:var(--n5)">加载中…</p>';try{var r=await fetch('STUDENT_GUIDE.md');if(!r.ok)throw 0;var md=await r.text();$('guideContent').innerHTML=marked.parse(md)}catch(e){$('guideContent').innerHTML='<p style="color:var(--red-600)">加载失败，请稍后重试。</p>'}};
 $('guideX').onclick=function(){$('guideOv').classList.remove('op')};$('guideOv').onclick=function(e){if(e.target===$('guideOv'))$('guideOv').classList.remove('op')};
 /* AUTO LOAD */
 (async function(){sbn('正在加载…','ld');try{var r=await fetch('data.xlsx',{cache:'no-cache'});if(!r.ok)throw 0;px(await r.arrayBuffer());sbn('✓ 已加载 '+DATA.length+' 条','ok');setTimeout(function(){$('banner').classList.remove('sh')},2500)}catch(e){sbn('加载失败','fl')}})();
@@ -206,6 +207,8 @@ $('loginX').onclick=function(){$('loginOv').classList.remove('op')};$('loginOv')
 $('lBtn').onclick=doLogin;$('lPwd').onkeydown=function(e){if(e.key==='Enter')doLogin()};
 async function doLogin(){var id=$('lId').value.trim(),pw=$('lPwd').value;if(!id||!pw){sm($('lMsg'),'请填写完整','er');return}var h=await sha(pw),adm=null;for(var i=0;i<ADMINS.length;i++){if(ADMINS[i].id===id&&ADMINS[i].pwdHash===h){adm=ADMINS[i];break}}if(!adm){sm($('lMsg'),'学号或密码错误','er');$('lPwd').value='';return}CUR=adm;$('loginOv').classList.remove('op');$('lId').value='';$('lPwd').value='';$('lMsg').className='mm';$('adminBtn').textContent='退出管理';$('adminBtn').classList.add('on');$('adminName').textContent=CUR.name+' · '+ROLES[CUR.role];$('sView').style.display='none';$('aView').style.display='block';$('idGrp').style.display='none';$('tabAdm').style.display=CUR.role==='super'?'':'none';$('tabCfg').style.display=CUR.role==='super'?'':'none';$('cfgPanel').style.display=CUR.role==='super'?'':'none';$('shareImport').style.display=CUR.role==='super'?'none':'';$('importCfgBtn').style.display=CUR.role==='super'?'none':'';setupImportTab();populateBranches();rTable();rStats();lCfg();if(CUR.role==='super')rAdmins()}
 
+/* ADMIN GUIDE */
+$('adminGuideBtn').onclick=async function(){$('guideOv').classList.add('op');$('guideContent').innerHTML='<p style="text-align:center;color:var(--n5)">加载中…</p>';try{var r=await fetch('ADMIN_GUIDE.md');if(!r.ok)throw 0;var md=await r.text();$('guideContent').innerHTML=marked.parse(md)}catch(e){$('guideContent').innerHTML='<p style="color:var(--red-600)">加载失败，请稍后重试。</p>'}};
 /* IMPORT CFG BTN for non-super */
 $('importCfgBtn').onclick=function(){$('tCfg').classList.add('ac');$('tRec').classList.remove('ac');document.querySelectorAll('.at').forEach(function(x){x.classList.remove('ac')})};
 
