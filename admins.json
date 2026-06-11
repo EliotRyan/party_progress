@@ -19,5 +19,12 @@
     "role": "contact",
     "scope": "2025级本科0班",
     "pwdHash": "eb386d9069640f0a325c03338e665e2d9572a8ac9e4bc3546b58aacdb580d961"
+  },
+  {
+    "id": "2025200830",
+    "name": "阮持宝",
+    "role": "contact",
+    "scope": "2025级1班",
+    "pwdHash": "eb386d9069640f0a325c03338e665e2d9572a8ac9e4bc3546b58aacdb580d961"
   }
 ]
